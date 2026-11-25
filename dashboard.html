@@ -1,0 +1,2482 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Red Wave | منظومة إدارة بنوك الدم الذكية</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Cairo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <!-- SheetJS for real Excel (.xlsx) Export/Import -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Cairo", "sans-serif"],
+            },
+            colors: {
+              crimson: {
+                DEFAULT: "#BE182D",
+                dark: "#9F1239",
+                light: "#FFF1F2",
+              },
+              navy: {
+                DEFAULT: "#122036",
+                light: "#1E293B",
+              },
+              teal: {
+                DEFAULT: "#0D9488",
+                light: "#F0FDFA",
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      body {
+        font-family: "Cairo", sans-serif;
+        background-color: #f8fafc;
+        color: #0f172a;
+      }
+      /* Custom scrollbar for Excel tables */
+      .excel-scroll::-webkit-scrollbar {
+        height: 8px;
+        width: 8px;
+      }
+      .excel-scroll::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 6px;
+      }
+      .excel-scroll::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 6px;
+      }
+      .excel-scroll::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+      .tab-active {
+        background-color: #be182d;
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(190, 24, 45, 0.25);
+      }
+      .comp-pill-active {
+        background-color: #122036;
+        color: #ffffff;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <!-- Toast Notification Container -->
+    <div
+      id="toast-container"
+      class="fixed bottom-5 left-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"
+    ></div>
+
+    <!-- Top Navigation Header -->
+    <header class="bg-navy text-white shadow-lg sticky top-0 z-40">
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3"
+      >
+        <!-- Brand Identity -->
+        <div class="flex items-center gap-3">
+          <div
+            class="w-11 h-11 rounded-xl bg-crimson flex items-center justify-center shadow-md"
+          >
+            <i class="fa-solid fa-droplet text-white text-xl"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">
+                Red Wave
+              </h1>
+              <span
+                class="text-xs bg-crimson/20 text-rose-200 border border-rose-400/30 px-2.5 py-0.5 rounded-full font-semibold"
+              >
+                نسخة النزول الميداني MVP
+              </span>
+            </div>
+            <p class="text-xs text-slate-300">
+              المنظومة الذكية لإدارة بنوك الدم ومشتقاته — محافظة الفيوم
+            </p>
+          </div>
+        </div>
+
+        <!-- Hospital Context & Direct Contact -->
+        <div class="flex flex-wrap items-center gap-3">
+          <div
+            class="hidden md:flex items-center gap-2 bg-navy-light px-3 py-1.5 rounded-xl border border-slate-700 text-xs"
+          >
+            <i class="fa-solid fa-hospital text-teal"></i>
+            <span class="text-slate-300">المركز النشط:</span>
+            <span class="font-bold text-white"
+              >بنك دم مستشفى الفيوم التخصصي (تجريبي)</span
+            >
+          </div>
+          <a
+            href="mailto:malakhussein635@gmail.com?subject=استفسار%20حول%20منظومة%20Red%20Wave"
+            class="flex items-center gap-2 bg-white/10 hover:bg-white/20 transition px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white"
+          >
+            <i class="fa-solid fa-envelope text-rose-400"></i>
+            <span>تواصل معنا</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Main Navigation Tabs -->
+      <div class="bg-slate-900/60 border-t border-slate-800">
+        <div
+          class="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex overflow-x-auto gap-2 no-scrollbar"
+        >
+          <button
+            onclick="switchMainTab('dashboard')"
+            id="nav-dashboard"
+            class="nav-btn tab-active flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition"
+          >
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>لوحة المخزون والمشتقات</span>
+          </button>
+
+          <button
+            onclick="switchMainTab('network')"
+            id="nav-network"
+            class="nav-btn text-slate-300 hover:bg-white/10 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition"
+          >
+            <i class="fa-solid fa-truck-medical"></i>
+            <span>شبكة تبادل المستشفيات</span>
+            <span
+              id="badge-transfers"
+              class="bg-teal text-white text-xs px-2 py-0.5 rounded-full"
+              >2</span
+            >
+          </button>
+
+          <button
+            onclick="switchMainTab('excel')"
+            id="nav-excel"
+            class="nav-btn text-slate-300 hover:bg-white/10 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition"
+          >
+            <i class="fa-solid fa-file-excel text-emerald-400"></i>
+            <span>شيت الإكسيل التجريبي (Live Sheet)</span>
+          </button>
+
+          <button
+            onclick="switchMainTab('feedback')"
+            id="nav-feedback"
+            class="nav-btn text-slate-300 hover:bg-white/10 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition"
+          >
+            <i class="fa-solid fa-clipboard-question text-amber-400"></i>
+            <span>تسجيل رأي المختصين والفيدباك</span>
+            <span
+              id="badge-feedback"
+              class="bg-amber-500 text-slate-950 text-xs px-2 py-0.5 rounded-full font-extrabold"
+              >2</span
+            >
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 py-6">
+      <!-- ========================================================= -->
+      <!-- TAB 1: MULTI-COMPONENT DASHBOARD (RBCs, Platelets, Plasma) -->
+      <!-- ========================================================= -->
+      <section id="view-dashboard" class="space-y-6">
+        <!-- Top KPI Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div
+            class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex items-center justify-between"
+          >
+            <div>
+              <p class="text-xs font-bold text-slate-500 mb-1">
+                إجمالي الوحدات المتاحة
+              </p>
+              <h2
+                id="kpi-total-units"
+                class="text-3xl font-extrabold text-navy"
+              >
+                0
+              </h2>
+              <p class="text-xs text-teal font-semibold mt-1">
+                كرات حمراء + صفائح + بلازما
+              </p>
+            </div>
+            <div
+              class="w-12 h-12 rounded-2xl bg-teal-light text-teal flex items-center justify-center text-xl"
+            >
+              <i class="fa-solid fa-boxes-stacked"></i>
+            </div>
+          </div>
+
+          <div
+            class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex items-center justify-between"
+          >
+            <div>
+              <p class="text-xs font-bold text-slate-500 mb-1">
+                تنبيهات العجز الحرج
+              </p>
+              <h2
+                id="kpi-critical-count"
+                class="text-3xl font-extrabold text-crimson"
+              >
+                0
+              </h2>
+              <p class="text-xs text-crimson font-semibold mt-1">
+                فصائل تحت الحد الآمن
+              </p>
+            </div>
+            <div
+              class="w-12 h-12 rounded-2xl bg-crimson-light text-crimson flex items-center justify-center text-xl"
+            >
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+          </div>
+
+          <div
+            class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex items-center justify-between"
+          >
+            <div>
+              <p class="text-xs font-bold text-slate-500 mb-1">
+                قرب انتهاء الصلاحية (FEFO)
+              </p>
+              <h2
+                id="kpi-expiring-soon"
+                class="text-3xl font-extrabold text-amber-600"
+              >
+                0
+              </h2>
+              <p class="text-xs text-amber-700 font-semibold mt-1">
+                تحتاج صرف عاجل أو تحويل
+              </p>
+            </div>
+            <div
+              class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl"
+            >
+              <i class="fa-solid fa-hourglass-half"></i>
+            </div>
+          </div>
+
+          <div
+            class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex items-center justify-between"
+          >
+            <div>
+              <p class="text-xs font-bold text-slate-500 mb-1">
+                عمليات الصرف والتحويل
+              </p>
+              <h2
+                id="kpi-transactions"
+                class="text-3xl font-extrabold text-navy"
+              >
+                0
+              </h2>
+              <p class="text-xs text-slate-500 font-semibold mt-1">
+                مسجلة تلقائياً في شيت الإكسيل
+              </p>
+            </div>
+            <div
+              class="w-12 h-12 rounded-2xl bg-slate-100 text-navy flex items-center justify-center text-xl"
+            >
+              <i class="fa-solid fa-rotate"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Component Filter Bar + Quick Add Button -->
+        <div
+          class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4"
+        >
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs font-bold text-slate-500 ml-1"
+              >تصفية حسب المكون:</span
+            >
+
+            <button
+              onclick="setComponentFilter('ALL')"
+              id="comp-ALL"
+              class="comp-btn comp-pill-active px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2"
+            >
+              <i class="fa-solid fa-layer-group"></i>
+              <span>جميع المكونات</span>
+            </button>
+
+            <button
+              onclick="setComponentFilter('RBC')"
+              id="comp-RBC"
+              class="comp-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2"
+            >
+              <i class="fa-solid fa-droplet text-crimson"></i>
+              <span>كرات الدم الحمراء (RBCs)</span>
+              <span
+                class="text-[11px] bg-white px-2 py-0.5 rounded-md text-slate-500"
+                >42 يوم</span
+              >
+            </button>
+
+            <button
+              onclick="setComponentFilter('Platelets')"
+              id="comp-Platelets"
+              class="comp-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2"
+            >
+              <i class="fa-solid fa-certificate text-amber-500"></i>
+              <span>الصفائح الدموية (Platelets)</span>
+              <span
+                class="text-[11px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-md font-extrabold"
+                >5 أيام فقط</span
+              >
+            </button>
+
+            <button
+              onclick="setComponentFilter('Plasma')"
+              id="comp-Plasma"
+              class="comp-btn bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-2"
+            >
+              <i class="fa-solid fa-snowflake text-sky-500"></i>
+              <span>البلازما (Plasma)</span>
+              <span
+                class="text-[11px] bg-white px-2 py-0.5 rounded-md text-slate-500"
+                >365 يوم</span
+              >
+            </button>
+          </div>
+
+          <button
+            onclick="openAddStockModal()"
+            class="bg-crimson hover:bg-crimson-dark text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-sm transition flex items-center justify-center gap-2"
+          >
+            <i class="fa-solid fa-plus"></i>
+            <span>استلام / إضافة وحدات جديدة</span>
+          </button>
+        </div>
+
+        <!-- Main Grid: Visual Bar Chart + Smart FEFO & AI Alerts -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Left 2 Columns: Visual Inventory Chart -->
+          <div
+            class="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-slate-200"
+          >
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-5">
+              <div>
+                <h3 class="text-lg font-extrabold text-navy" id="chart-title">
+                  توزيع المخزون الحي حسب الفصائل
+                </h3>
+                <p class="text-xs text-slate-500">
+                  مقارنة الكمية المتاحة بالحد الآمن لكل فصيلة (أخضر: آمن |
+                  برتقالي: منخفض | أحمر: حرج)
+                </p>
+              </div>
+              <div class="flex items-center gap-3 text-xs font-bold">
+                <span class="flex items-center gap-1 text-teal"
+                  ><span
+                    class="w-2.5 h-2.5 rounded-full bg-teal inline-block"
+                  ></span>
+                  آمن</span
+                >
+                <span class="flex items-center gap-1 text-amber-600"
+                  ><span
+                    class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"
+                  ></span>
+                  منخفض</span
+                >
+                <span class="flex items-center gap-1 text-crimson"
+                  ><span
+                    class="w-2.5 h-2.5 rounded-full bg-crimson inline-block"
+                  ></span>
+                  حرج</span
+                >
+              </div>
+            </div>
+
+            <div id="inventory-bars" class="space-y-3.5">
+              <!-- Dynamically populated visual bars -->
+            </div>
+          </div>
+
+          <!-- Right 1 Column: Smart FEFO & Predictive Shortage Alerts -->
+          <div
+            class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col"
+          >
+            <div class="flex items-center gap-2 mb-4">
+              <div
+                class="w-8 h-8 rounded-lg bg-crimson-light text-crimson flex items-center justify-center"
+              >
+                <i class="fa-solid fa-bell"></i>
+              </div>
+              <div>
+                <h3 class="text-base font-extrabold text-navy">
+                  الإنذار المبكر وخوارزمية FEFO
+                </h3>
+                <p class="text-xs text-slate-500">
+                  توصيات ذكية لمنع الهدر وتفادي العجز
+                </p>
+              </div>
+            </div>
+
+            <div
+              id="smart-alerts-list"
+              class="space-y-3 flex-grow overflow-y-auto max-h-[380px] pr-1"
+            >
+              <!-- Dynamically populated smart alerts -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed Interactive Stock Table -->
+        <div
+          class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
+        >
+          <div
+            class="p-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3"
+          >
+            <div>
+              <h3 class="text-lg font-extrabold text-navy">
+                جدول إدارة الوحدات التفصيلي (كرات حمراء • صفائح • بلازما)
+              </h3>
+              <p class="text-xs text-slate-500">
+                كل عملية صرف (FEFO) أو إضافة تُحدث المخزون وشيت الإكسيل فوراً
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <select
+                id="filter-blood-type"
+                onchange="renderDashboard()"
+                class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:border-crimson"
+              >
+                <option value="ALL">كل الفصائل (8 فصائل)</option>
+                <option value="O-">O-</option>
+                <option value="O+">O+</option>
+                <option value="A-">A-</option>
+                <option value="A+">A+</option>
+                <option value="B-">B-</option>
+                <option value="B+">B+</option>
+                <option value="AB-">AB-</option>
+                <option value="AB+">AB+</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto excel-scroll">
+            <table class="w-full text-right border-collapse">
+              <thead>
+                <tr
+                  class="bg-slate-50 text-slate-600 text-xs font-extrabold border-b border-slate-200"
+                >
+                  <th class="py-3.5 px-4">المكون الطبي</th>
+                  <th class="py-3.5 px-4">الفصيلة</th>
+                  <th class="py-3.5 px-4">الكمية المتاحة</th>
+                  <th class="py-3.5 px-4">الحد الآمن</th>
+                  <th class="py-3.5 px-4">أقرب صلاحية (FEFO)</th>
+                  <th class="py-3.5 px-4">الحالة</th>
+                  <th class="py-3.5 px-4 text-center">إجراءات سريعة</th>
+                </tr>
+              </thead>
+              <tbody
+                id="inventory-table-body"
+                class="divide-y divide-slate-100 text-sm"
+              >
+                <!-- Populated via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- TAB 2: INTER-HOSPITAL EMERGENCY EXCHANGE NETWORK          -->
+      <!-- ========================================================= -->
+      <section id="view-network" class="hidden space-y-6">
+        <div
+          class="bg-navy text-white rounded-2xl p-6 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+        >
+          <div>
+            <span
+              class="text-xs font-bold text-teal bg-teal/20 px-3 py-1 rounded-full"
+              >شبكة مستشفيات محافظة الفيوم</span
+            >
+            <h2 class="text-2xl font-extrabold mt-2">
+              التبادل الطارئ للأكياس والمشتقات بين بنوك الدم
+            </h2>
+            <p class="text-sm text-slate-300 mt-1">
+              ابحث عن أقرب مستشفى يمتلك فائضاً آمناً من الفصيلة والمكون المطلوب
+              واطلب تحويلاً فورياً.
+            </p>
+          </div>
+          <div
+            class="bg-white/10 rounded-xl p-3 text-xs text-slate-200 border border-white/10"
+          >
+            <p class="font-bold text-white mb-1">
+              <i class="fa-solid fa-circle-dot text-emerald-400 ml-1"></i> 4
+              بنوك دم متصلة حالياً
+            </p>
+            <p>
+              متوسط زمن الاستجابة في الطوارئ:
+              <span class="font-bold text-amber-300">18 دقيقة</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Search Surplus Form -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          <h3 class="text-base font-extrabold text-navy mb-4">
+            1. حدد الاحتياج الطارئ للبحث في المستشفيات المجاورة
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1.5"
+                >المكون المطلوب</label
+              >
+              <select
+                id="net-component"
+                onchange="renderNetworkHospitals()"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-bold text-navy"
+              >
+                <option value="RBC">كرات الدم الحمراء (RBCs)</option>
+                <option value="Platelets">الصفائح الدموية (Platelets)</option>
+                <option value="Plasma">البلازما (Plasma)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1.5"
+                >فصيلة الدم</label
+              >
+              <select
+                id="net-blood-type"
+                onchange="renderNetworkHospitals()"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-bold text-navy"
+              >
+                <option value="O-">O- (فصيلة نادرة)</option>
+                <option value="AB-">AB- (فصيلة نادرة)</option>
+                <option value="A-">A-</option>
+                <option value="B-">B-</option>
+                <option value="O+">O+</option>
+                <option value="A+">A+</option>
+                <option value="B+">B+</option>
+                <option value="AB+">AB+</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1.5"
+                >عدد الوحدات المطلوبة</label
+              >
+              <input
+                type="number"
+                id="net-qty"
+                value="2"
+                min="1"
+                max="10"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-bold text-navy"
+              />
+            </div>
+            <div class="flex items-end">
+              <button
+                onclick="renderNetworkHospitals()"
+                class="w-full bg-teal hover:bg-teal-700 text-white font-bold py-2.5 px-4 rounded-xl text-sm transition flex items-center justify-center gap-2"
+              >
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>تحديث البحث اللحظي</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nearby Hospitals Cards -->
+        <div
+          id="network-hospitals-grid"
+          class="grid grid-cols-1 md:grid-cols-2 gap-4"
+        >
+          <!-- Populated dynamically -->
+        </div>
+
+        <!-- Active Transfer Requests Log -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          <h3 class="text-base font-extrabold text-navy mb-3">
+            سجل طلبات التحويل الجارية
+          </h3>
+          <div id="transfer-requests-list" class="space-y-2.5">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- TAB 3: LIVE EXPERIMENTAL EXCEL SHEET (SYNCED LEDGER)      -->
+      <!-- ========================================================= -->
+      <section id="view-excel" class="hidden space-y-6">
+        <!-- Excel Toolbar -->
+        <div
+          class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4"
+        >
+          <div class="flex items-start gap-3">
+            <div
+              class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl shrink-0"
+            >
+              <i class="fa-solid fa-file-excel"></i>
+            </div>
+            <div>
+              <h2 class="text-lg font-extrabold text-navy">
+                شيت الإكسيل التجريبي المتزامن (Red_Wave_Data.xlsx)
+              </h2>
+              <p class="text-xs text-slate-500 mt-0.5">
+                يعرض هذا الشيت جميع بيانات المخزون، الحركات اللحظية، ونتائج
+                مقابلات المستشفيات. يمكنك تصديره كملف Excel حقيقي في أي لحظة.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2.5">
+            <button
+              onclick="exportToExcel()"
+              class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow-sm transition flex items-center gap-2"
+            >
+              <i class="fa-solid fa-download"></i>
+              <span>تحميل كملف Excel (.xlsx)</span>
+            </button>
+
+            <label
+              class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold cursor-pointer transition flex items-center gap-2"
+            >
+              <i class="fa-solid fa-upload text-navy"></i>
+              <span>استيراد شيت (.xlsx/.csv)</span>
+              <input
+                type="file"
+                id="excel-upload"
+                accept=".xlsx,.xls,.csv"
+                onchange="importFromExcel(event)"
+                class="hidden"
+              />
+            </label>
+
+            <button
+              onclick="resetDemoData()"
+              class="bg-rose-50 hover:bg-rose-100 text-crimson px-3.5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+            >
+              <i class="fa-solid fa-arrow-rotate-left"></i>
+              <span>إعادة ضبط البيانات التجريبية</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Sheet Switcher Tabs (Excel Workbook Style) -->
+        <div
+          class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
+        >
+          <div
+            class="bg-slate-100 px-4 pt-3 border-b border-slate-200 flex items-center gap-2 overflow-x-auto"
+          >
+            <button
+              onclick="switchExcelSubSheet('inventory')"
+              id="sheet-tab-inventory"
+              class="px-4 py-2 rounded-t-xl text-xs font-extrabold bg-white text-emerald-700 border-t border-x border-slate-200 flex items-center gap-2"
+            >
+              <i class="fa-solid fa-table"></i>
+              <span>Sheet 1: مخزون المشتقات والفصائل</span>
+            </button>
+            <button
+              onclick="switchExcelSubSheet('transactions')"
+              id="sheet-tab-transactions"
+              class="px-4 py-2 rounded-t-xl text-xs font-bold text-slate-600 hover:bg-white/60 flex items-center gap-2"
+            >
+              <i class="fa-solid fa-clock-rotate-left"></i>
+              <span>Sheet 2: سجل الحركات (صرف / إضافة / تحويل)</span>
+            </button>
+            <button
+              onclick="switchExcelSubSheet('feedback')"
+              id="sheet-tab-feedback"
+              class="px-4 py-2 rounded-t-xl text-xs font-bold text-slate-600 hover:bg-white/60 flex items-center gap-2"
+            >
+              <i class="fa-solid fa-comments"></i>
+              <span>Sheet 3: سجل مقابلات السوق والفيدباك</span>
+            </button>
+          </div>
+
+          <!-- Sub-sheet 1: Inventory Sheet -->
+          <div id="subsheet-inventory" class="overflow-x-auto excel-scroll">
+            <table class="w-full text-right border-collapse text-xs sm:text-sm">
+              <thead>
+                <tr
+                  class="bg-emerald-50/70 text-emerald-950 font-extrabold border-b border-slate-200"
+                >
+                  <th class="py-3 px-4 border-l border-slate-200">#</th>
+                  <th class="py-3 px-4 border-l border-slate-200">
+                    كود الصنف (SKU)
+                  </th>
+                  <th class="py-3 px-4 border-l border-slate-200">
+                    المكون (Component)
+                  </th>
+                  <th class="py-3 px-4 border-l border-slate-200">
+                    الفصيلة (Blood Type)
+                  </th>
+                  <th class="py-3 px-4 border-l border-slate-200">
+                    الوحدات المتاحة
+                  </th>
+                  <th class="py-3 px-4 border-l border-slate-200">
+                    الحد الآمن
+                  </th>
+                  <th class="py-3 px-4 border-l border-slate-200">
+                    أقرب انتهاء صلاحية
+                  </th>
+                  <th class="py-3 px-4">الحالة الحالية</th>
+                </tr>
+              </thead>
+              <tbody
+                id="excel-inventory-body"
+                class="divide-y divide-slate-200 font-mono text-xs"
+              >
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Sub-sheet 2: Transactions Ledger -->
+          <div
+            id="subsheet-transactions"
+            class="hidden overflow-x-auto excel-scroll"
+          >
+            <table class="w-full text-right border-collapse text-xs sm:text-sm">
+              <thead>
+                <tr
+                  class="bg-emerald-50/70 text-emerald-950 font-extrabold border-b border-slate-200"
+                >
+                  <th class="py-3 px-4 border-l border-slate-200">التوقيت</th>
+                  <th class="py-3 px-4 border-l border-slate-200">
+                    نوع الحركة
+                  </th>
+                  <th class="py-3 px-4 border-l border-slate-200">المكون</th>
+                  <th class="py-3 px-4 border-l border-slate-200">الفصيلة</th>
+                  <th class="py-3 px-4 border-l border-slate-200">العدد</th>
+                  <th class="py-3 px-4">الجهة / الملاحظات</th>
+                </tr>
+              </thead>
+              <tbody
+                id="excel-transactions-body"
+                class="divide-y divide-slate-200 text-xs"
+              >
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Sub-sheet 3: Feedback Sheet -->
+          <div
+            id="subsheet-feedback"
+            class="hidden overflow-x-auto excel-scroll"
+          >
+            <table class="w-full text-right border-collapse text-xs sm:text-sm">
+              <thead>
+                <tr
+                  class="bg-emerald-50/70 text-emerald-950 font-extrabold border-b border-slate-200"
+                >
+                  <th class="py-3 px-4 border-l border-slate-200">التاريخ</th>
+                  <th class="py-3 px-4 border-l border-slate-200">
+                    الاسم والصفة
+                  </th>
+                  <th class="py-3 px-4 border-l border-slate-200">
+                    المستشفى / بنك الدم
+                  </th>
+                  <th class="py-3 px-4 border-l border-slate-200">التواصل</th>
+                  <th class="py-3 px-4 border-l border-slate-200">
+                    النظام الحالي
+                  </th>
+                  <th class="py-3 px-4 border-l border-slate-200">
+                    الهدر الشهري
+                  </th>
+                  <th class="py-3 px-4 border-l border-slate-200">التقييم</th>
+                  <th class="py-3 px-4">الملاحظات والمقترحات</th>
+                </tr>
+              </thead>
+              <tbody
+                id="excel-feedback-body"
+                class="divide-y divide-slate-200 text-xs"
+              >
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================= -->
+      <!-- TAB 4: FIELD INTERVIEW FEEDBACK & CONTACT FORM            -->
+      <!-- ========================================================= -->
+      <section id="view-feedback" class="hidden space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Left 2 Columns: Structured Interview Feedback Form -->
+          <div
+            class="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-slate-200"
+          >
+            <div
+              class="flex items-center gap-3 mb-5 pb-4 border-b border-slate-100"
+            >
+              <div
+                class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl"
+              >
+                <i class="fa-solid fa-clipboard-check"></i>
+              </div>
+              <div>
+                <h2 class="text-xl font-extrabold text-navy">
+                  نموذج توثيق المقابلات الميدانية والفيدباك
+                </h2>
+                <p class="text-xs text-slate-500">
+                  يُحفظ رأي المسؤول مباشرة في شيت الإكسيل التجريبي لعرضه كدليل
+                  سوقي أمام لجنة التحكيم
+                </p>
+              </div>
+            </div>
+
+            <form
+              id="feedback-form"
+              onsubmit="submitFeedback(event)"
+              class="space-y-4"
+            >
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1"
+                    >اسم المسؤول / المختص *</label
+                  >
+                  <input
+                    type="text"
+                    id="fb-name"
+                    required
+                    placeholder="مثال: د. أحمد محمود"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-crimson"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1"
+                    >المسمى الوظيفي *</label
+                  >
+                  <select
+                    id="fb-role"
+                    required
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-navy focus:outline-none focus:border-crimson"
+                  >
+                    <option value="مدير بنك دم">مدير بنك دم</option>
+                    <option value="أخصائي / كيميائي بنك دم">
+                      أخصائي / كيميائي بنك دم
+                    </option>
+                    <option value="طبيب طوارئ / جراحة">
+                      طبيب طوارئ / جراحة
+                    </option>
+                    <option value="مدير مستشفى / إدارة طبية">
+                      مدير مستشفى / إدارة طبية
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1"
+                    >اسم المستشفى أو بنك الدم *</label
+                  >
+                  <input
+                    type="text"
+                    id="fb-hospital"
+                    required
+                    placeholder="مثال: مستشفى الندى التخصصي - الفيوم"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-crimson"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1"
+                    >البريد الإلكتروني أو رقم الهاتف للتواصل</label
+                  >
+                  <input
+                    type="text"
+                    id="fb-contact"
+                    placeholder="example@hospital.com / 010xxxxxxx"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-crimson"
+                  />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1"
+                    >طريقة متابعة المخزون الحالية لديهم</label
+                  >
+                  <select
+                    id="fb-current-sys"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-navy"
+                  >
+                    <option value="دفاتر ورقية وسجلات يدوية">
+                      دفاتر ورقية وسجلات يدوية
+                    </option>
+                    <option value="ملفات Excel">ملفات Excel</option>
+                    <option value="نظام مستشفى داخلي معزول (HIS)">
+                      نظام مستشفى داخلي معزول (HIS)
+                    </option>
+                    <option value="مزيج بين الورقي والكمبيوتر">
+                      مزيج بين الورقي والكمبيوتر
+                    </option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-slate-700 mb-1"
+                    >متوسط الأكياس/الصفائح المنتهية شهرياً (تقديري)</label
+                  >
+                  <input
+                    type="text"
+                    id="fb-waste"
+                    placeholder="مثال: 5 - 10 وحدات صفائح شهرياً"
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-crimson"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5"
+                  >مدى ملاءمة فكرة Red Wave لاحتياجهم الفعلي</label
+                >
+                <div class="flex items-center gap-2" id="rating-stars">
+                  <button
+                    type="button"
+                    onclick="setRating(1)"
+                    class="star-btn text-2xl text-amber-400"
+                  >
+                    <i class="fa-solid fa-star"></i>
+                  </button>
+                  <button
+                    type="button"
+                    onclick="setRating(2)"
+                    class="star-btn text-2xl text-amber-400"
+                  >
+                    <i class="fa-solid fa-star"></i>
+                  </button>
+                  <button
+                    type="button"
+                    onclick="setRating(3)"
+                    class="star-btn text-2xl text-amber-400"
+                  >
+                    <i class="fa-solid fa-star"></i>
+                  </button>
+                  <button
+                    type="button"
+                    onclick="setRating(4)"
+                    class="star-btn text-2xl text-amber-400"
+                  >
+                    <i class="fa-solid fa-star"></i>
+                  </button>
+                  <button
+                    type="button"
+                    onclick="setRating(5)"
+                    class="star-btn text-2xl text-amber-400"
+                  >
+                    <i class="fa-solid fa-star"></i>
+                  </button>
+                  <span
+                    id="rating-label"
+                    class="text-xs font-bold text-slate-600 mr-2"
+                    >(5 / 5 — ممتاز ومطلوب بشدة)</span
+                  >
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1"
+                  >ملاحظات المختص، أهم مشكلة يواجهها، ومقترحاته *</label
+                >
+                <textarea
+                  id="fb-notes"
+                  rows="3"
+                  required
+                  placeholder="اكتب هنا أهم ما ذكره المسؤول أثناء المقابلة (مثلاً: صعوبة توفير الصفائح في عطلة نهاية الأسبوع، الحاجة لربط المستشفيات القريبة...)"
+                  class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-sm focus:outline-none focus:border-crimson"
+                ></textarea>
+              </div>
+
+              <div
+                class="flex flex-wrap items-center justify-between gap-3 pt-2"
+              >
+                <button
+                  type="submit"
+                  class="bg-crimson hover:bg-crimson-dark text-white font-bold px-6 py-3 rounded-xl text-sm shadow-md transition flex items-center gap-2"
+                >
+                  <i class="fa-solid fa-floppy-disk"></i>
+                  <span>حفظ الفيدباك في شيت الإكسيل</span>
+                </button>
+
+                <button
+                  type="button"
+                  onclick="
+                    switchMainTab('excel');
+                    switchExcelSubSheet('feedback');
+                  "
+                  class="text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1"
+                >
+                  <i class="fa-solid fa-table"></i>
+                  <span>عرض سجل المقابلات في الشيت</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Right Column: Team Contact Card & Recent Field Insights -->
+          <div class="space-y-6">
+            <!-- Direct Contact Box for Hospital Managers -->
+            <div class="bg-navy text-white rounded-2xl p-6 shadow-md">
+              <span class="text-xs font-bold text-rose-400 tracking-wider"
+                >RED WAVE TEAM — SU-0264</span
+              >
+              <h3 class="text-lg font-extrabold mt-1">
+                قنوات التواصل الرسمية للفريق
+              </h3>
+              <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                للتنسيق حول تجربة النسخة التجريبية (Pilot) في مستشفاكم أو مشاركة
+                البيانات والمقترحات:
+              </p>
+
+              <div class="mt-4 space-y-2.5 text-xs">
+                <div
+                  class="bg-white/10 rounded-xl p-3 flex items-center justify-between"
+                >
+                  <div class="flex items-center gap-2.5">
+                    <i class="fa-solid fa-envelope text-rose-400 text-base"></i>
+                    <div>
+                      <p class="text-slate-400 text-[11px]">
+                        البريد الإلكتروني للفريق
+                      </p>
+                      <p
+                        id="team-email-text"
+                        class="font-bold text-white select-all"
+                      >
+                        malakhussein635@gmail.com
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onclick="copyEmail()"
+                    class="bg-white/10 hover:bg-white/20 px-2.5 py-1.5 rounded-lg text-xs font-bold transition"
+                  >
+                    نسخ
+                  </button>
+                </div>
+
+                <div
+                  class="bg-white/10 rounded-xl p-3 flex items-center gap-2.5"
+                >
+                  <i class="fa-solid fa-location-dot text-teal text-base"></i>
+                  <div>
+                    <p class="text-slate-400 text-[11px]">المقر والمبادرة</p>
+                    <p class="font-bold text-white">
+                      مركز إبداع مصر الرقمية — Creativa Fayoum
+                    </p>
+                  </div>
+                </div>
+
+                <div class="bg-white/10 rounded-xl p-3">
+                  <p class="text-slate-400 text-[11px] mb-1">
+                    أعضاء فريق العمل:
+                  </p>
+                  <p class="font-semibold text-slate-200 leading-relaxed">
+                    ملك حسين أحمد (قائد الفريق) • نورا عبدالعظيم • رزان أحمد •
+                    سيف أحمد
+                  </p>
+                </div>
+              </div>
+
+              <a
+                href="mailto:malakhussein635@gmail.com?subject=طلب%20تجربة%20منظومة%20Red%20Wave%20في%20المستشفى"
+                class="mt-4 w-full bg-crimson hover:bg-crimson-dark text-white font-bold py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center gap-2"
+              >
+                <i class="fa-solid fa-paper-plane"></i>
+                <span>إرسال رسالة بريدية مباشرة الآن</span>
+              </a>
+            </div>
+
+            <!-- Latest Recorded Interviews Preview -->
+            <div
+              class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200"
+            >
+              <h3 class="text-sm font-extrabold text-navy mb-3">
+                أحدث المقابلات المسجلة
+              </h3>
+              <div
+                id="recent-feedback-cards"
+                class="space-y-3 max-h-[280px] overflow-y-auto"
+              >
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal: Add / Receive New Blood Units -->
+    <div
+      id="add-stock-modal"
+      class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4"
+    >
+      <div
+        class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200"
+      >
+        <div
+          class="flex items-center justify-between pb-3 border-b border-slate-100"
+        >
+          <h3 class="text-lg font-extrabold text-navy">
+            استلام / إضافة وحدات جديدة للمخزون
+          </h3>
+          <button
+            onclick="closeAddStockModal()"
+            class="text-slate-400 hover:text-slate-700 text-lg"
+          >
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <form onsubmit="handleAddStock(event)" class="space-y-4 mt-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1"
+              >نوع المكون الطبي</label
+            >
+            <select
+              id="add-component"
+              onchange="updateDefaultShelfLife()"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-bold text-navy"
+            >
+              <option value="RBC">
+                كرات الدم الحمراء (RBCs — صلاحية 42 يوم)
+              </option>
+              <option value="Platelets">
+                الصفائح الدموية (Platelets — صلاحية 5 أيام)
+              </option>
+              <option value="Plasma">البلازما (Plasma — صلاحية 365 يوم)</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1"
+                >فصيلة الدم</label
+              >
+              <select
+                id="add-blood-type"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-bold text-navy"
+              >
+                <option value="O-">O-</option>
+                <option value="O+">O+</option>
+                <option value="A-">A-</option>
+                <option value="A+">A+</option>
+                <option value="B-">B-</option>
+                <option value="B+">B+</option>
+                <option value="AB-">AB-</option>
+                <option value="AB+">AB+</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1"
+                >عدد الوحدات</label
+              >
+              <input
+                type="number"
+                id="add-units"
+                value="3"
+                min="1"
+                max="50"
+                required
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-bold text-navy"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1"
+              >الصلاحية المتبقية (بالساعات أو الأيام)</label
+            >
+            <input
+              type="text"
+              id="add-expiry"
+              value="38 يوم"
+              required
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-navy"
+            />
+          </div>
+
+          <div class="flex items-center justify-end gap-2 pt-3">
+            <button
+              type="button"
+              onclick="closeAddStockModal()"
+              class="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100"
+            >
+              إلغاء
+            </button>
+            <button
+              type="submit"
+              class="bg-teal hover:bg-teal-700 text-white px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow-sm"
+            >
+              تأكيد الإضافة للشيت
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-10">
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500"
+      >
+        <p class="font-bold text-navy">
+          Red Wave (SU-0264) — نموذج أولي تفاعلي لاختبار السوق (Creativa Fayoum
+          2026)
+        </p>
+        <p>
+          البيانات المعروضة تجريبية للمحاكاة وقابلة للتعديل والتصدير كملف Excel
+        </p>
+      </div>
+    </footer>
+
+    <!-- ========================================================= -->
+    <!-- JAVASCRIPT APPLICATION LOGIC                              -->
+    <!-- ========================================================= -->
+    <script>
+      // 1. INITIAL EXPERIMENTAL DATASET (RBCs, Platelets, Plasma)
+      const DEFAULT_INVENTORY = [
+        // Red Blood Cells (RBCs)
+        {
+          id: "RBC-O-NEG",
+          component: "RBC",
+          compName: "كرات الدم الحمراء",
+          bloodType: "O-",
+          units: 5,
+          threshold: 12,
+          expiryLabel: "14 يوم",
+          urgentExpiry: false,
+        },
+        {
+          id: "RBC-O-POS",
+          component: "RBC",
+          compName: "كرات الدم الحمراء",
+          bloodType: "O+",
+          units: 42,
+          threshold: 20,
+          expiryLabel: "29 يوم",
+          urgentExpiry: false,
+        },
+        {
+          id: "RBC-A-NEG",
+          component: "RBC",
+          compName: "كرات الدم الحمراء",
+          bloodType: "A-",
+          units: 9,
+          threshold: 10,
+          expiryLabel: "6 أيام",
+          urgentExpiry: true,
+        },
+        {
+          id: "RBC-A-POS",
+          component: "RBC",
+          compName: "كرات الدم الحمراء",
+          bloodType: "A+",
+          units: 35,
+          threshold: 18,
+          expiryLabel: "24 يوم",
+          urgentExpiry: false,
+        },
+        {
+          id: "RBC-B-NEG",
+          component: "RBC",
+          compName: "كرات الدم الحمراء",
+          bloodType: "B-",
+          units: 7,
+          threshold: 10,
+          expiryLabel: "19 يوم",
+          urgentExpiry: false,
+        },
+        {
+          id: "RBC-B-POS",
+          component: "RBC",
+          compName: "كرات الدم الحمراء",
+          bloodType: "B+",
+          units: 28,
+          threshold: 15,
+          expiryLabel: "31 يوم",
+          urgentExpiry: false,
+        },
+        {
+          id: "RBC-AB-NEG",
+          component: "RBC",
+          compName: "كرات الدم الحمراء",
+          bloodType: "AB-",
+          units: 3,
+          threshold: 8,
+          expiryLabel: "11 يوم",
+          urgentExpiry: false,
+        },
+        {
+          id: "RBC-AB-POS",
+          component: "RBC",
+          compName: "كرات الدم الحمراء",
+          bloodType: "AB+",
+          units: 16,
+          threshold: 10,
+          expiryLabel: "22 يوم",
+          urgentExpiry: false,
+        },
+
+        // Platelets (5 days shelf life - high urgency)
+        {
+          id: "PLT-O-NEG",
+          component: "Platelets",
+          compName: "الصفائح الدموية",
+          bloodType: "O-",
+          units: 2,
+          threshold: 6,
+          expiryLabel: "32 ساعة",
+          urgentExpiry: true,
+        },
+        {
+          id: "PLT-O-POS",
+          component: "Platelets",
+          compName: "الصفائح الدموية",
+          bloodType: "O+",
+          units: 14,
+          threshold: 10,
+          expiryLabel: "36 ساعة",
+          urgentExpiry: true,
+        },
+        {
+          id: "PLT-A-NEG",
+          component: "Platelets",
+          compName: "الصفائح الدموية",
+          bloodType: "A-",
+          units: 3,
+          threshold: 5,
+          expiryLabel: "3 أيام",
+          urgentExpiry: false,
+        },
+        {
+          id: "PLT-A-POS",
+          component: "Platelets",
+          compName: "الصفائح الدموية",
+          bloodType: "A+",
+          units: 11,
+          threshold: 8,
+          expiryLabel: "4 أيام",
+          urgentExpiry: false,
+        },
+        {
+          id: "PLT-B-NEG",
+          component: "Platelets",
+          compName: "الصفائح الدموية",
+          bloodType: "B-",
+          units: 2,
+          threshold: 5,
+          expiryLabel: "28 ساعة",
+          urgentExpiry: true,
+        },
+        {
+          id: "PLT-B-POS",
+          component: "Platelets",
+          compName: "الصفائح الدموية",
+          bloodType: "B+",
+          units: 9,
+          threshold: 8,
+          expiryLabel: "4 أيام",
+          urgentExpiry: false,
+        },
+        {
+          id: "PLT-AB-NEG",
+          component: "Platelets",
+          compName: "الصفائح الدموية",
+          bloodType: "AB-",
+          units: 1,
+          threshold: 4,
+          expiryLabel: "48 ساعة",
+          urgentExpiry: true,
+        },
+        {
+          id: "PLT-AB-POS",
+          component: "Platelets",
+          compName: "الصفائح الدموية",
+          bloodType: "AB+",
+          units: 6,
+          threshold: 5,
+          expiryLabel: "4 أيام",
+          urgentExpiry: false,
+        },
+
+        // Plasma (365 days shelf life)
+        {
+          id: "PLS-O-NEG",
+          component: "Plasma",
+          compName: "البلازما",
+          bloodType: "O-",
+          units: 12,
+          threshold: 10,
+          expiryLabel: "210 يوم",
+          urgentExpiry: false,
+        },
+        {
+          id: "PLS-O-POS",
+          component: "Plasma",
+          compName: "البلازما",
+          bloodType: "O+",
+          units: 54,
+          threshold: 25,
+          expiryLabel: "310 يوم",
+          urgentExpiry: false,
+        },
+        {
+          id: "PLS-A-NEG",
+          component: "Plasma",
+          compName: "البلازما",
+          bloodType: "A-",
+          units: 11,
+          threshold: 10,
+          expiryLabel: "185 يوم",
+          urgentExpiry: false,
+        },
+        {
+          id: "PLS-A-POS",
+          component: "Plasma",
+          compName: "البلازما",
+          bloodType: "A+",
+          units: 46,
+          threshold: 20,
+          expiryLabel: "290 يوم",
+          urgentExpiry: false,
+        },
+        {
+          id: "PLS-B-NEG",
+          component: "Plasma",
+          compName: "البلازما",
+          bloodType: "B-",
+          units: 8,
+          threshold: 10,
+          expiryLabel: "140 يوم",
+          urgentExpiry: false,
+        },
+        {
+          id: "PLS-B-POS",
+          component: "Plasma",
+          compName: "البلازما",
+          bloodType: "B+",
+          units: 39,
+          threshold: 18,
+          expiryLabel: "275 يوم",
+          urgentExpiry: false,
+        },
+        {
+          id: "PLS-AB-NEG",
+          component: "Plasma",
+          compName: "البلازما",
+          bloodType: "AB-",
+          units: 9,
+          threshold: 8,
+          expiryLabel: "260 يوم",
+          urgentExpiry: false,
+        },
+        {
+          id: "PLS-AB-POS",
+          component: "Plasma",
+          compName: "البلازما",
+          bloodType: "AB+",
+          units: 25,
+          threshold: 12,
+          expiryLabel: "330 يوم",
+          urgentExpiry: false,
+        },
+      ];
+
+      const DEFAULT_TRANSACTIONS = [
+        {
+          time: "اليوم 09:15 ص",
+          type: "صرف عاجل (FEFO)",
+          component: "الصفائح الدموية",
+          bloodType: "O+",
+          qty: 2,
+          notes: "صرف أولوية قرب الانتهاء لقسم الجراحة",
+        },
+        {
+          time: "اليوم 10:40 ص",
+          type: "استلام مخزون",
+          component: "كرات الدم الحمراء",
+          bloodType: "A+",
+          qty: 6,
+          notes: "وارد من حملة تبرع جامعة الفيوم",
+        },
+        {
+          time: "اليوم 11:20 ص",
+          type: "طلب تحويل طارئ",
+          component: "كرات الدم الحمراء",
+          bloodType: "O-",
+          qty: 2,
+          notes: "طلب وارد من بنك الدم الإقليمي بالفيوم",
+        },
+      ];
+
+      const DEFAULT_FEEDBACK = [
+        {
+          date: "2026-11-24",
+          name: "د. طارق عبدالرحمن",
+          role: "أخصائي / كيميائي بنك دم",
+          hospital: "مستشفى جامعة الفيوم (مثال تجريبي)",
+          contact: "tarek.lab@example.com",
+          currentSys: "دفاتر ورقية وسجلات يدوية",
+          waste: "6 وحدات صفائح شهرياً",
+          rating: 5,
+          notes:
+            "ميزة تنبيه الصفائح قبل انتهاء الـ 5 أيام وربطها بمستشفيات الفيوم القريبة ستحل أكبر مشكلة نواجهها يومياً.",
+        },
+        {
+          date: "2026-11-24",
+          name: "أ. سارة محمود",
+          role: "مدير بنك دم",
+          hospital: "مستشفى خاص بالفيوم (مثال تجريبي)",
+          contact: "0100xxxxxxx",
+          currentSys: "ملفات Excel",
+          waste: "4 أكياس دم و8 صفائح",
+          rating: 4,
+          notes:
+            "نحتاج أن يكون النظام سهلاً وسريعاً في الإدخال أثناء الطوارئ، وإمكانية تصدير تقارير شهرية للإدارة.",
+        },
+      ];
+
+      const FAYOUM_HOSPITALS = [
+        {
+          name: "بنك الدم الإقليمي بالفيوم",
+          distance: "2.4 كم",
+          eta: "9 دقائق",
+          phone: "084-214xxxx",
+          surplus: {
+            RBC: {
+              "O-": 9,
+              "AB-": 6,
+              "A-": 12,
+              "B-": 8,
+              "O+": 45,
+              "A+": 38,
+              "B+": 30,
+              "AB+": 18,
+            },
+            Platelets: {
+              "O-": 5,
+              "AB-": 4,
+              "A-": 7,
+              "B-": 5,
+              "O+": 16,
+              "A+": 14,
+              "B+": 11,
+              "AB+": 8,
+            },
+            Plasma: {
+              "O-": 18,
+              "AB-": 14,
+              "A-": 20,
+              "B-": 15,
+              "O+": 60,
+              "A+": 50,
+              "B+": 42,
+              "AB+": 28,
+            },
+          },
+        },
+        {
+          name: "مستشفى جامعة الفيوم",
+          distance: "3.8 كم",
+          eta: "14 دقيقة",
+          phone: "084-215xxxx",
+          surplus: {
+            RBC: {
+              "O-": 7,
+              "AB-": 4,
+              "A-": 10,
+              "B-": 9,
+              "O+": 52,
+              "A+": 41,
+              "B+": 33,
+              "AB+": 20,
+            },
+            Platelets: {
+              "O-": 4,
+              "AB-": 3,
+              "A-": 6,
+              "B-": 4,
+              "O+": 19,
+              "A+": 15,
+              "B+": 12,
+              "AB+": 9,
+            },
+            Plasma: {
+              "O-": 15,
+              "AB-": 12,
+              "A-": 19,
+              "B-": 14,
+              "O+": 65,
+              "A+": 55,
+              "B+": 44,
+              "AB+": 30,
+            },
+          },
+        },
+        {
+          name: "مستشفى الفيوم العام",
+          distance: "4.5 كم",
+          eta: "16 دقيقة",
+          phone: "084-216xxxx",
+          surplus: {
+            RBC: {
+              "O-": 6,
+              "AB-": 5,
+              "A-": 8,
+              "B-": 7,
+              "O+": 39,
+              "A+": 34,
+              "B+": 27,
+              "AB+": 15,
+            },
+            Platelets: {
+              "O-": 3,
+              "AB-": 2,
+              "A-": 5,
+              "B-": 3,
+              "O+": 12,
+              "A+": 10,
+              "B+": 9,
+              "AB+": 6,
+            },
+            Plasma: {
+              "O-": 14,
+              "AB-": 10,
+              "A-": 16,
+              "B-": 12,
+              "O+": 48,
+              "A+": 40,
+              "B+": 35,
+              "AB+": 22,
+            },
+          },
+        },
+        {
+          name: "مستشفى الندى التخصصي بالفيوم",
+          distance: "5.1 كم",
+          eta: "18 دقيقة",
+          phone: "084-217xxxx",
+          surplus: {
+            RBC: {
+              "O-": 4,
+              "AB-": 3,
+              "A-": 6,
+              "B-": 5,
+              "O+": 25,
+              "A+": 22,
+              "B+": 19,
+              "AB+": 11,
+            },
+            Platelets: {
+              "O-": 3,
+              "AB-": 2,
+              "A-": 4,
+              "B-": 3,
+              "O+": 9,
+              "A+": 8,
+              "B+": 7,
+              "AB+": 5,
+            },
+            Plasma: {
+              "O-": 10,
+              "AB-": 8,
+              "A-": 12,
+              "B-": 9,
+              "O+": 30,
+              "A+": 28,
+              "B+": 24,
+              "AB+": 16,
+            },
+          },
+        },
+      ];
+
+      // 2. APPLICATION STATE WITH LOCALSTORAGE PERSISTENCE
+      let state = {
+        inventory:
+          JSON.parse(localStorage.getItem("rw_inventory")) ||
+          structuredClone(DEFAULT_INVENTORY),
+        transactions:
+          JSON.parse(localStorage.getItem("rw_transactions")) ||
+          structuredClone(DEFAULT_TRANSACTIONS),
+        feedback:
+          JSON.parse(localStorage.getItem("rw_feedback")) ||
+          structuredClone(DEFAULT_FEEDBACK),
+        transfers: [
+          {
+            id: "TR-101",
+            hospital: "بنك الدم الإقليمي بالفيوم",
+            component: "الصفائح الدموية",
+            bloodType: "O-",
+            qty: 2,
+            status: "قيد التوصيل (8 دقائق)",
+          },
+          {
+            id: "TR-102",
+            hospital: "مستشفى جامعة الفيوم",
+            component: "كرات الدم الحمراء",
+            bloodType: "AB-",
+            qty: 2,
+            status: "تمت الموافقة",
+          },
+        ],
+        selectedComponent: "ALL",
+        currentRating: 5,
+      };
+
+      function saveState() {
+        localStorage.setItem("rw_inventory", JSON.stringify(state.inventory));
+        localStorage.setItem(
+          "rw_transactions",
+          JSON.stringify(state.transactions),
+        );
+        localStorage.setItem("rw_feedback", JSON.stringify(state.feedback));
+      }
+
+      // 3. TOAST NOTIFICATIONS
+      function showToast(message, type = "success") {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+        const colors =
+          type === "error"
+            ? "bg-crimson text-white"
+            : type === "warning"
+              ? "bg-amber-600 text-white"
+              : "bg-navy text-white border-r-4 border-teal";
+
+        toast.className = `${colors} pointer-events-auto px-4 py-3 rounded-xl shadow-lg text-xs sm:text-sm font-bold flex items-center justify-between gap-3 transition-all duration-300`;
+        toast.innerHTML = `<span>${message}</span><i class="fa-solid fa-circle-check text-teal-300"></i>`;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.opacity = "0";
+          setTimeout(() => toast.remove(), 300);
+        }, 3500);
+      }
+
+      // 4. MAIN NAVIGATION SWITCHER
+      function switchMainTab(tabName) {
+        ["dashboard", "network", "excel", "feedback"].forEach((t) => {
+          document.getElementById(`view-${t}`).classList.add("hidden");
+          const btn = document.getElementById(`nav-${t}`);
+          btn.classList.remove("tab-active");
+          btn.classList.add("text-slate-300");
+        });
+
+        document.getElementById(`view-${tabName}`).classList.remove("hidden");
+        const activeBtn = document.getElementById(`nav-${tabName}`);
+        activeBtn.classList.add("tab-active");
+        activeBtn.classList.remove("text-slate-300");
+
+        if (tabName === "network") renderNetworkHospitals();
+        if (tabName === "excel") renderExcelSheets();
+        if (tabName === "feedback") renderRecentFeedback();
+      }
+
+      // 5. COMPONENT FILTERING & DASHBOARD RENDERING
+      function setComponentFilter(comp) {
+        state.selectedComponent = comp;
+        document.querySelectorAll(".comp-btn").forEach((btn) => {
+          btn.classList.remove("comp-pill-active");
+          btn.classList.add("bg-slate-100", "text-slate-700");
+        });
+        const active = document.getElementById(`comp-${comp}`);
+        active.classList.add("comp-pill-active");
+        active.classList.remove("bg-slate-100", "text-slate-700");
+        renderDashboard();
+      }
+
+      function getStatusInfo(item) {
+        if (item.units <= Math.ceil(item.threshold * 0.5)) {
+          return {
+            label: "حرج جداً",
+            badge: "bg-crimson-light text-crimson border border-rose-200",
+            barColor: "bg-crimson",
+            level: "critical",
+          };
+        }
+        if (item.units < item.threshold) {
+          return {
+            label: "منخفض",
+            badge: "bg-amber-50 text-amber-700 border border-amber-200",
+            barColor: "bg-amber-500",
+            level: "low",
+          };
+        }
+        return {
+          label: "آمن",
+          badge: "bg-teal-light text-teal border border-teal-200",
+          barColor: "bg-teal",
+          level: "safe",
+        };
+      }
+
+      function renderDashboard() {
+        const bloodFilter = document.getElementById("filter-blood-type").value;
+
+        // Update Top KPIs across all inventory
+        const totalUnits = state.inventory.reduce((sum, i) => sum + i.units, 0);
+        const criticalCount = state.inventory.filter(
+          (i) => i.units < i.threshold,
+        ).length;
+        const expiringCount = state.inventory.filter(
+          (i) => i.urgentExpiry && i.units > 0,
+        ).length;
+
+        document.getElementById("kpi-total-units").textContent = totalUnits;
+        document.getElementById("kpi-critical-count").textContent =
+          criticalCount;
+        document.getElementById("kpi-expiring-soon").textContent =
+          expiringCount;
+        document.getElementById("kpi-transactions").textContent =
+          state.transactions.length;
+        document.getElementById("badge-feedback").textContent =
+          state.feedback.length;
+        document.getElementById("badge-transfers").textContent =
+          state.transfers.length;
+
+        // Filter items for Table
+        let filtered = state.inventory.filter((item) => {
+          const matchComp =
+            state.selectedComponent === "ALL" ||
+            item.component === state.selectedComponent;
+          const matchType =
+            bloodFilter === "ALL" || item.bloodType === bloodFilter;
+          return matchComp && matchType;
+        });
+
+        // Render Visual Bar Chart (Aggregated by Blood Type for selected component)
+        const bloodTypes = ["O-", "O+", "A-", "A+", "B-", "B+", "AB-", "AB+"];
+        const barsContainer = document.getElementById("inventory-bars");
+        const compTitleMap = {
+          ALL: "إجمالي المخزون الحي (كرات حمراء + صفائح + بلازما) حسب الفصيلة",
+          RBC: "مخزون كرات الدم الحمراء (RBCs) حسب الفصيلة",
+          Platelets: "مخزون الصفائح الدموية (Platelets - 5 أيام) حسب الفصيلة",
+          Plasma: "مخزون البلازما (Plasma) حسب الفصيلة",
+        };
+        document.getElementById("chart-title").textContent =
+          compTitleMap[state.selectedComponent];
+
+        barsContainer.innerHTML = bloodTypes
+          .map((bt) => {
+            const matchingItems = state.inventory.filter(
+              (i) =>
+                i.bloodType === bt &&
+                (state.selectedComponent === "ALL" ||
+                  i.component === state.selectedComponent),
+            );
+            const sumUnits = matchingItems.reduce((s, x) => s + x.units, 0);
+            const sumThreshold = matchingItems.reduce(
+              (s, x) => s + x.threshold,
+              0,
+            );
+            const maxScale = state.selectedComponent === "ALL" ? 120 : 60;
+            const pct = Math.min(100, Math.round((sumUnits / maxScale) * 100));
+
+            let barColor = "bg-teal";
+            let textColor = "text-teal";
+            if (sumUnits <= Math.ceil(sumThreshold * 0.5)) {
+              barColor = "bg-crimson";
+              textColor = "text-crimson";
+            } else if (sumUnits < sumThreshold) {
+              barColor = "bg-amber-500";
+              textColor = "text-amber-600";
+            }
+
+            return `
+          <div class="flex items-center gap-3">
+            <span class="w-11 text-sm font-extrabold text-navy text-left" dir="ltr">${bt}</span>
+            <div class="flex-grow h-6 bg-slate-100 rounded-lg overflow-hidden relative">
+              <div class="${barColor} h-full rounded-lg transition-all duration-500" style="width: ${pct}%"></div>
+            </div>
+            <span class="w-24 text-xs font-extrabold ${textColor} text-left">${sumUnits} وحدة <span class="text-slate-400 font-normal">/ ${sumThreshold}</span></span>
+          </div>
+        `;
+          })
+          .join("");
+
+        // Render Smart FEFO & Shortage Alerts
+        const alertsContainer = document.getElementById("smart-alerts-list");
+        const urgentItems = state.inventory.filter(
+          (i) => (i.urgentExpiry && i.units > 0) || i.units < i.threshold,
+        );
+
+        alertsContainer.innerHTML = urgentItems
+          .slice(0, 6)
+          .map((item) => {
+            const isExpiry = item.urgentExpiry && item.units > 0;
+            return `
+          <div class="p-3.5 rounded-xl border ${isExpiry ? "bg-amber-50/70 border-amber-200" : "bg-crimson-light/70 border-rose-200"}">
+            <div class="flex items-center justify-between gap-2 mb-1">
+              <span class="text-xs font-extrabold ${isExpiry ? "text-amber-800" : "text-crimson"}">
+                <i class="fa-solid ${isExpiry ? "fa-hourglass-end" : "fa-circle-exclamation"} ml-1"></i>
+                ${isExpiry ? `قرب انتهاء الصلاحية (${item.expiryLabel})` : `عجز في المخزون (${item.units} متاح)`}
+              </span>
+              <span class="text-xs font-extrabold bg-white px-2 py-0.5 rounded-md text-navy" dir="ltr">${item.bloodType}</span>
+            </div>
+            <p class="text-xs text-slate-700 font-semibold mb-2">
+              ${item.compName} — ${isExpiry ? "يُوصى بصرفها أولاً (FEFO) أو تحويلها لمستشفى مجاور." : `أقل من الحد الآمن (${item.threshold} وحدة).`}
+            </p>
+            <div class="flex items-center gap-2">
+              ${
+                isExpiry
+                  ? `<button onclick="dispenseUnit('${item.id}')" class="bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition">صرف عاجل FEFO</button>`
+                  : `<button onclick="quickRequestTransfer('${item.component}', '${item.bloodType}')" class="bg-crimson hover:bg-crimson-dark text-white text-[11px] font-bold px-2.5 py-1 rounded-lg transition">طلب تحويل من مستشفى</button>`
+              }
+            </div>
+          </div>
+        `;
+          })
+          .join("");
+
+        // Render Detailed Inventory Table
+        const tbody = document.getElementById("inventory-table-body");
+        tbody.innerHTML = filtered
+          .map((item) => {
+            const status = getStatusInfo(item);
+            const compIcon =
+              item.component === "Platelets"
+                ? '<i class="fa-solid fa-certificate text-amber-500 ml-1.5"></i>'
+                : item.component === "Plasma"
+                  ? '<i class="fa-solid fa-snowflake text-sky-500 ml-1.5"></i>'
+                  : '<i class="fa-solid fa-droplet text-crimson ml-1.5"></i>';
+
+            return `
+          <tr class="hover:bg-slate-50/80 transition">
+            <td class="py-3.5 px-4 font-bold text-navy">${compIcon}${item.compName}</td>
+            <td class="py-3.5 px-4">
+              <span class="inline-block bg-slate-100 text-navy font-extrabold px-2.5 py-1 rounded-lg text-xs" dir="ltr">${item.bloodType}</span>
+            </td>
+            <td class="py-3.5 px-4 font-extrabold text-base text-navy">${item.units}</td>
+            <td class="py-3.5 px-4 text-slate-500 font-semibold">${item.threshold}</td>
+            <td class="py-3.5 px-4">
+              <span class="text-xs font-bold ${item.urgentExpiry ? "text-amber-700 bg-amber-100 px-2 py-1 rounded-md" : "text-slate-600"}">
+                ${item.expiryLabel}
+              </span>
+            </td>
+            <td class="py-3.5 px-4">
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full ${status.badge}">${status.label}</span>
+            </td>
+            <td class="py-3.5 px-4">
+              <div class="flex items-center justify-center gap-2">
+                <button onclick="dispenseUnit('${item.id}')"
+                  class="bg-navy hover:bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1"
+                  title="صرف وحدة واحدة بالأولوية للأقرب انتهاءً">
+                  <i class="fa-solid fa-arrow-up-from-bracket text-[10px]"></i>
+                  <span>صرف (FEFO)</span>
+                </button>
+                <button onclick="quickAddOne('${item.id}')"
+                  class="bg-teal-light hover:bg-teal text-teal hover:text-white text-xs font-bold px-2.5 py-1.5 rounded-lg transition"
+                  title="إضافة وحدة سريعة">
+                  <i class="fa-solid fa-plus"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+          })
+          .join("");
+      }
+
+      // 6. INVENTORY ACTIONS (DISPENSE & ADD)
+      function dispenseUnit(id) {
+        const item = state.inventory.find((i) => i.id === id);
+        if (!item || item.units <= 0) {
+          showToast("لا توجد وحدات متاحة للصرف من هذا الصنف!", "error");
+          return;
+        }
+        item.units -= 1;
+        if (item.units === 0) item.urgentExpiry = false;
+
+        const now = new Date().toLocaleTimeString("ar-EG", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        state.transactions.unshift({
+          time: `الآن (${now})`,
+          type: "صرف وحدة (FEFO)",
+          component: item.compName,
+          bloodType: item.bloodType,
+          qty: 1,
+          notes: `صرف بالأولوية (صلاحية: ${item.expiryLabel})`,
+        });
+
+        saveState();
+        renderDashboard();
+        showToast(
+          `تم صرف 1 وحدة (${item.compName} - ${item.bloodType}) وتحديث شيت الإكسيل`,
+        );
+      }
+
+      function quickAddOne(id) {
+        const item = state.inventory.find((i) => i.id === id);
+        if (!item) return;
+        item.units += 1;
+
+        const now = new Date().toLocaleTimeString("ar-EG", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        state.transactions.unshift({
+          time: `الآن (${now})`,
+          type: "استلام سريع",
+          component: item.compName,
+          bloodType: item.bloodType,
+          qty: 1,
+          notes: "إضافة سريعة للمخزون",
+        });
+
+        saveState();
+        renderDashboard();
+        showToast(`تمت إضافة 1 وحدة (${item.compName} - ${item.bloodType})`);
+      }
+
+      function openAddStockModal() {
+        document.getElementById("add-stock-modal").classList.remove("hidden");
+        document.getElementById("add-stock-modal").classList.add("flex");
+      }
+
+      function closeAddStockModal() {
+        document.getElementById("add-stock-modal").classList.add("hidden");
+        document.getElementById("add-stock-modal").classList.remove("flex");
+      }
+
+      function updateDefaultShelfLife() {
+        const comp = document.getElementById("add-component").value;
+        const expInput = document.getElementById("add-expiry");
+        if (comp === "RBC") expInput.value = "40 يوم";
+        if (comp === "Platelets") expInput.value = "5 أيام";
+        if (comp === "Plasma") expInput.value = "360 يوم";
+      }
+
+      function handleAddStock(e) {
+        e.preventDefault();
+        const comp = document.getElementById("add-component").value;
+        const bt = document.getElementById("add-blood-type").value;
+        const qty = parseInt(document.getElementById("add-units").value, 10);
+        const expiry = document.getElementById("add-expiry").value;
+
+        const item = state.inventory.find(
+          (i) => i.component === comp && i.bloodType === bt,
+        );
+        if (item) {
+          item.units += qty;
+          item.expiryLabel = expiry;
+          item.urgentExpiry =
+            expiry.includes("ساعة") || expiry.includes("يومان");
+        }
+
+        const compNames = {
+          RBC: "كرات الدم الحمراء",
+          Platelets: "الصفائح الدموية",
+          Plasma: "البلازما",
+        };
+        const now = new Date().toLocaleTimeString("ar-EG", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        state.transactions.unshift({
+          time: `الآن (${now})`,
+          type: "استلام مخزون جديد",
+          component: compNames[comp],
+          bloodType: bt,
+          qty: qty,
+          notes: `صلاحية مسجلة: ${expiry}`,
+        });
+
+        saveState();
+        closeAddStockModal();
+        renderDashboard();
+        showToast(`تم استلام ${qty} وحدات من ${compNames[comp]} (${bt}) بنجاح`);
+      }
+
+      // 7. INTER-HOSPITAL EXCHANGE NETWORK
+      function quickRequestTransfer(comp, bt) {
+        switchMainTab("network");
+        document.getElementById("net-component").value = comp;
+        document.getElementById("net-blood-type").value = bt;
+        renderNetworkHospitals();
+      }
+
+      function renderNetworkHospitals() {
+        const comp = document.getElementById("net-component").value;
+        const bt = document.getElementById("net-blood-type").value;
+        const reqQty =
+          parseInt(document.getElementById("net-qty").value, 10) || 1;
+        const compNames = {
+          RBC: "كرات الدم الحمراء",
+          Platelets: "الصفائح الدموية",
+          Plasma: "البلازما",
+        };
+
+        const grid = document.getElementById("network-hospitals-grid");
+        grid.innerHTML = FAYOUM_HOSPITALS.map((hosp) => {
+          const available = hosp.surplus[comp][bt] || 0;
+          const canFulfill = available >= reqQty;
+
+          return `
+          <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex flex-col justify-between gap-4">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <h4 class="text-base font-extrabold text-navy">${hosp.name}</h4>
+                <p class="text-xs text-slate-500 mt-1">
+                  <i class="fa-solid fa-location-arrow text-teal ml-1"></i> المسافة: <b>${hosp.distance}</b>
+                  <span class="mx-2">•</span>
+                  <i class="fa-solid fa-clock text-amber-500 ml-1"></i> الوصول المتوقع: <b>${hosp.eta}</b>
+                </p>
+              </div>
+              <div class="text-left">
+                <span class="text-xs font-bold text-slate-400 block">الفائض المتاح</span>
+                <span class="text-xl font-extrabold ${canFulfill ? "text-teal" : "text-crimson"}">${available} وحدة</span>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+              <span class="text-xs font-bold text-slate-600">${compNames[comp]} (<span dir="ltr">${bt}</span>)</span>
+              <button onclick="requestTransferFrom('${hosp.name}', '${comp}', '${bt}', ${reqQty})"
+                ${!canFulfill ? "disabled" : ""}
+                class="${canFulfill ? "bg-crimson hover:bg-crimson-dark text-white" : "bg-slate-100 text-slate-400 cursor-not-allowed"} px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                <i class="fa-solid fa-paper-plane"></i>
+                <span>${canFulfill ? `طلب تحويل (${reqQty} وحدة)` : "الكمية غير كافية"}</span>
+              </button>
+            </div>
+          </div>
+        `;
+        }).join("");
+
+        // Render active transfers list
+        const list = document.getElementById("transfer-requests-list");
+        list.innerHTML = state.transfers
+          .map(
+            (tr) => `
+        <div class="bg-slate-50 rounded-xl p-3.5 border border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div class="flex items-center gap-2.5">
+            <span class="font-mono font-extrabold text-navy bg-white px-2 py-1 rounded-md border border-slate-200">${tr.id}</span>
+            <span class="font-bold text-navy">${tr.hospital}</span>
+            <span class="text-slate-500">— ${tr.qty} وحدة ${tr.component} (<b dir="ltr">${tr.bloodType}</b>)</span>
+          </div>
+          <span class="bg-teal-light text-teal font-extrabold px-3 py-1 rounded-full">${tr.status}</span>
+        </div>
+      `,
+          )
+          .join("");
+      }
+
+      function requestTransferFrom(hospitalName, comp, bt, qty) {
+        const compNames = {
+          RBC: "كرات الدم الحمراء",
+          Platelets: "الصفائح الدموية",
+          Plasma: "البلازما",
+        };
+        const newId = "TR-" + (100 + state.transfers.length + 1);
+
+        state.transfers.unshift({
+          id: newId,
+          hospital: hospitalName,
+          component: compNames[comp],
+          bloodType: bt,
+          qty: qty,
+          status: "تم إرسال الطلب الطارئ ✓",
+        });
+
+        const now = new Date().toLocaleTimeString("ar-EG", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        state.transactions.unshift({
+          time: `الآن (${now})`,
+          type: "طلب تحويل بين المستشفيات",
+          component: compNames[comp],
+          bloodType: bt,
+          qty: qty,
+          notes: `طلب طارئ من ${hospitalName}`,
+        });
+
+        saveState();
+        renderDashboard();
+        renderNetworkHospitals();
+        showToast(`تم إرسال طلب تحويل طارئ إلى ${hospitalName}`);
+      }
+
+      // 8. LIVE EXCEL SHEET VIEW & REAL XLSX EXPORT / IMPORT
+      function switchExcelSubSheet(sheetName) {
+        ["inventory", "transactions", "feedback"].forEach((s) => {
+          document.getElementById(`subsheet-${s}`).classList.add("hidden");
+          const tab = document.getElementById(`sheet-tab-${s}`);
+          tab.classList.remove(
+            "bg-white",
+            "text-emerald-700",
+            "border-t",
+            "border-x",
+            "border-slate-200",
+            "font-extrabold",
+          );
+          tab.classList.add("text-slate-600", "font-bold");
+        });
+
+        document
+          .getElementById(`subsheet-${sheetName}`)
+          .classList.remove("hidden");
+        const activeTab = document.getElementById(`sheet-tab-${sheetName}`);
+        activeTab.classList.add(
+          "bg-white",
+          "text-emerald-700",
+          "border-t",
+          "border-x",
+          "border-slate-200",
+          "font-extrabold",
+        );
+        activeTab.classList.remove("text-slate-600", "font-bold");
+        renderExcelSheets();
+      }
+
+      function renderExcelSheets() {
+        // Sheet 1: Inventory
+        document.getElementById("excel-inventory-body").innerHTML =
+          state.inventory
+            .map((item, idx) => {
+              const st = getStatusInfo(item);
+              return `
+          <tr class="hover:bg-emerald-50/30">
+            <td class="py-2.5 px-4 border-l border-slate-200 text-slate-400">${idx + 1}</td>
+            <td class="py-2.5 px-4 border-l border-slate-200 font-bold text-navy">${item.id}</td>
+            <td class="py-2.5 px-4 border-l border-slate-200 font-sans font-bold">${item.compName}</td>
+            <td class="py-2.5 px-4 border-l border-slate-200 font-bold" dir="ltr">${item.bloodType}</td>
+            <td class="py-2.5 px-4 border-l border-slate-200 font-extrabold text-navy">${item.units}</td>
+            <td class="py-2.5 px-4 border-l border-slate-200 text-slate-500">${item.threshold}</td>
+            <td class="py-2.5 px-4 border-l border-slate-200 font-sans">${item.expiryLabel}</td>
+            <td class="py-2.5 px-4 font-sans font-bold">${st.label}</td>
+          </tr>
+        `;
+            })
+            .join("");
+
+        // Sheet 2: Transactions
+        document.getElementById("excel-transactions-body").innerHTML =
+          state.transactions
+            .map(
+              (tr) => `
+        <tr class="hover:bg-emerald-50/30">
+          <td class="py-2.5 px-4 border-l border-slate-200 text-slate-500">${tr.time}</td>
+          <td class="py-2.5 px-4 border-l border-slate-200 font-bold text-navy">${tr.type}</td>
+          <td class="py-2.5 px-4 border-l border-slate-200">${tr.component}</td>
+          <td class="py-2.5 px-4 border-l border-slate-200 font-bold" dir="ltr">${tr.bloodType}</td>
+          <td class="py-2.5 px-4 border-l border-slate-200 font-extrabold">${tr.qty}</td>
+          <td class="py-2.5 px-4 text-slate-600">${tr.notes}</td>
+        </tr>
+      `,
+            )
+            .join("");
+
+        // Sheet 3: Feedback
+        document.getElementById("excel-feedback-body").innerHTML =
+          state.feedback
+            .map(
+              (fb) => `
+        <tr class="hover:bg-emerald-50/30">
+          <td class="py-2.5 px-4 border-l border-slate-200 text-slate-500">${fb.date}</td>
+          <td class="py-2.5 px-4 border-l border-slate-200 font-bold text-navy">${fb.name} (${fb.role})</td>
+          <td class="py-2.5 px-4 border-l border-slate-200 font-semibold">${fb.hospital}</td>
+          <td class="py-2.5 px-4 border-l border-slate-200 text-slate-600">${fb.contact || "-"}</td>
+          <td class="py-2.5 px-4 border-l border-slate-200">${fb.currentSys}</td>
+          <td class="py-2.5 px-4 border-l border-slate-200 text-crimson font-bold">${fb.waste || "-"}</td>
+          <td class="py-2.5 px-4 border-l border-slate-200 font-bold text-amber-600">${fb.rating} / 5</td>
+          <td class="py-2.5 px-4 text-slate-700 max-w-xs">${fb.notes}</td>
+        </tr>
+      `,
+            )
+            .join("");
+      }
+
+      function exportToExcel() {
+        try {
+          const wb = XLSX.utils.book_new();
+
+          // Prepare Sheet 1 Data
+          const invRows = state.inventory.map((i) => ({
+            "كود الصنف": i.id,
+            "المكون الطبي": i.compName,
+            "فصيلة الدم": i.bloodType,
+            "الوحدات المتاحة": i.units,
+            "الحد الآمن": i.threshold,
+            "أقرب انتهاء صلاحية": i.expiryLabel,
+            الحالة: getStatusInfo(i).label,
+          }));
+          const ws1 = XLSX.utils.json_to_sheet(invRows);
+          XLSX.utils.book_append_sheet(wb, ws1, "المخزون_والمشتقات");
+
+          // Prepare Sheet 2 Data
+          const trRows = state.transactions.map((t) => ({
+            التوقيت: t.time,
+            "نوع الحركة": t.type,
+            المكون: t.component,
+            الفصيلة: t.bloodType,
+            العدد: t.qty,
+            ملاحظات: t.notes,
+          }));
+          const ws2 = XLSX.utils.json_to_sheet(trRows);
+          XLSX.utils.book_append_sheet(wb, ws2, "سجل_الحركات");
+
+          // Prepare Sheet 3 Data
+          const fbRows = state.feedback.map((f) => ({
+            التاريخ: f.date,
+            "اسم المختص": f.name,
+            "المسمى الوظيفي": f.role,
+            "المستشفى / بنك الدم": f.hospital,
+            "بيانات التواصل": f.contact,
+            "النظام الحالي": f.currentSys,
+            "الهدر الشهري المقدر": f.waste,
+            "التقييم من 5": f.rating,
+            "الملاحظات والمقترحات": f.notes,
+          }));
+          const ws3 = XLSX.utils.json_to_sheet(fbRows);
+          XLSX.utils.book_append_sheet(wb, ws3, "فيدباك_المقابلات");
+
+          XLSX.writeFile(wb, "Red_Wave_Fayoum_Field_Data.xlsx");
+          showToast("تم تحميل ملف Excel بنجاح (3 شيتات متكاملة)");
+        } catch (err) {
+          showToast("حدث خطأ أثناء التصدير", "error");
+        }
+      }
+
+      function importFromExcel(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: "array" });
+            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+            const rows = XLSX.utils.sheet_to_json(firstSheet);
+
+            if (rows.length > 0) {
+              rows.forEach((r) => {
+                const code = r["كود الصنف"] || r["id"];
+                const units = Number(r["الوحدات المتاحة"] ?? r["units"]);
+                if (code && !isNaN(units)) {
+                  const target = state.inventory.find((i) => i.id === code);
+                  if (target) target.units = units;
+                }
+              });
+              saveState();
+              renderDashboard();
+              renderExcelSheets();
+              showToast(
+                "تم استيراد البيانات من ملف الإكسيل وتحديث لوحة التحكم!",
+              );
+            }
+          } catch (err) {
+            showToast("تعذر قراءة الملف، تأكد من تطابق الأعمدة", "error");
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      }
+
+      function resetDemoData() {
+        state.inventory = structuredClone(DEFAULT_INVENTORY);
+        state.transactions = structuredClone(DEFAULT_TRANSACTIONS);
+        state.feedback = structuredClone(DEFAULT_FEEDBACK);
+        saveState();
+        renderDashboard();
+        renderExcelSheets();
+        renderRecentFeedback();
+        showToast("تمت إعادة ضبط البيانات التجريبية الافتراضية");
+      }
+
+      // 9. FEEDBACK FORM & CONTACT HELPERS
+      function setRating(val) {
+        state.currentRating = val;
+        const labels = {
+          1: "(1 / 5 — غير مناسب حالياً)",
+          2: "(2 / 5 — يحتاج تعديلات كبيرة)",
+          3: "(3 / 5 — جيد ومفيد نسبياً)",
+          4: "(4 / 5 — مفيد جداً للمستشفى)",
+          5: "(5 / 5 — ممتاز ومطلوب بشدة)",
+        };
+        document.getElementById("rating-label").textContent = labels[val];
+        document.querySelectorAll(".star-btn").forEach((btn, idx) => {
+          btn.classList.toggle("text-amber-400", idx < val);
+          btn.classList.toggle("text-slate-300", idx >= val);
+        });
+      }
+
+      function submitFeedback(e) {
+        e.preventDefault();
+        const entry = {
+          date: new Date().toISOString().split("T")[0],
+          name: document.getElementById("fb-name").value.trim(),
+          role: document.getElementById("fb-role").value,
+          hospital: document.getElementById("fb-hospital").value.trim(),
+          contact: document.getElementById("fb-contact").value.trim(),
+          currentSys: document.getElementById("fb-current-sys").value,
+          waste: document.getElementById("fb-waste").value.trim(),
+          rating: state.currentRating,
+          notes: document.getElementById("fb-notes").value.trim(),
+        };
+
+        state.feedback.unshift(entry);
+        saveState();
+        renderDashboard();
+        renderRecentFeedback();
+        document.getElementById("feedback-form").reset();
+        setRating(5);
+        showToast("تم حفظ رأي المختص في شيت الإكسيل بنجاح!");
+      }
+
+      function renderRecentFeedback() {
+        const container = document.getElementById("recent-feedback-cards");
+        container.innerHTML = state.feedback
+          .map(
+            (fb) => `
+        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+          <div class="flex items-center justify-between gap-2 mb-1">
+            <span class="text-xs font-extrabold text-navy">${fb.name}</span>
+            <span class="text-xs font-bold text-amber-600">${"★".repeat(fb.rating)}</span>
+          </div>
+          <p class="text-[11px] font-bold text-teal mb-1">${fb.role} — ${fb.hospital}</p>
+          <p class="text-xs text-slate-600 leading-relaxed">"${fb.notes}"</p>
+        </div>
+      `,
+          )
+          .join("");
+      }
+
+      function copyEmail() {
+        const email = document.getElementById("team-email-text").textContent;
+        const tempInput = document.createElement("input");
+        tempInput.value = email;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+        showToast("تم نسخ البريد الإلكتروني: " + email);
+      }
+
+      // Initialize App on Load
+      window.addEventListener("DOMContentLoaded", () => {
+        renderDashboard();
+        renderNetworkHospitals();
+        renderExcelSheets();
+        renderRecentFeedback();
+      });
+    </script>
+  </body>
+</html>
