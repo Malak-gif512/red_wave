@@ -1,953 +1,115 @@
-<!doctype html>
-<html lang="ar" dir="rtl" class="scroll-smooth">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Red Wave | المنظومة الذكية لإدارة مخزون بنوك الدم</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Cairo -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
-    <!-- Font Awesome Icons -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    />
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ريد ويف | Red Wave</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--bg:#F6FAF8;--card:#fff;--ink:#122036;--mut:#5a6b80;--red:#BE182D;--teal:#0D9488;--line:#E1EBE7;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Cairo',Tahoma,sans-serif;line-height:1.7}
+.w{max-width:1080px;margin:0 auto;padding:0 16px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
+header .w{display:flex;align-items:center;gap:12px;padding:10px 16px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:22px}
+nav{display:flex;gap:6px;flex-wrap:wrap;margin-inline-start:auto}
+button,.btn{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:8px 16px;background:var(--line);color:var(--ink);text-decoration:none;display:inline-block}
+.red{background:var(--red);color:#fff}.teal{background:var(--teal);color:#fff}
+h1{font-size:clamp(30px,6vw,52px);margin:36px 0 8px;line-height:1.3}h1 b{color:var(--red)}
+h2{font-size:28px;margin:0 0 6px}p{margin:0 0 10px}.mut{color:var(--mut)}
+section{padding:36px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.f{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+label{font-weight:600;font-size:14px;display:grid;gap:4px}
+input,select,textarea{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);width:100%}
+.full{grid-column:1/-1}
+.ok{background:rgba(13,148,136,.12);border:1px solid var(--teal);border-radius:14px;padding:14px;margin-top:12px}
+.tag{display:inline-block;padding:2px 10px;border-radius:99px;font-size:13px;font-weight:600;background:var(--line)}
+.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:560px}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:start;font-size:15px}th{background:var(--ink);color:var(--bg)}
+.num{font-size:40px;font-weight:800;color:var(--red);line-height:1.1}
+svg text{font-family:'Cairo',sans-serif}
+.hide{display:none!important}footer{padding:30px 0;color:var(--mut);font-size:14px;text-align:center}
+</style></head><body>
+<header><div class="w"><div class="logo"><svg width="34" height="40" viewBox="0 0 100 120" aria-label="Red Wave"><path d="M50 6C50 6 14 52 14 78a36 36 0 0 0 72 0C86 52 50 6 50 6Z" fill="#BE182D"/><path d="M26 80q12-12 24 0t24 0" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/></svg>ريد ويف <small class="mut">RED WAVE</small></div>
+<nav><button onclick="go('request')">اطلب دم</button><button onclick="go('donor')">سجّل كمتبرع</button><button onclick="go('map')">الخريطة</button><button onclick="go('learn')">توعية</button><button class="red" onclick="location.hash='admin'">لوحة التحكم</button></nav></div></header>
 
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ["Cairo", "sans-serif"],
-            },
-            colors: {
-              crimson: {
-                DEFAULT: "#BE182D",
-                dark: "#9F1239",
-                light: "#FFF1F2",
-              },
-              navy: {
-                DEFAULT: "#122036",
-                light: "#1E293B",
-              },
-              teal: {
-                DEFAULT: "#0D9488",
-                light: "#F0FDFA",
-              },
-            },
-          },
-        },
-      };
-    </script>
+<main id="pub"><div class="w">
+<section><span class="tag">انطلاق تجريبي · مركز الفيوم</span>
+<h1>أسرع وصول إلى <b>متبرع بديل</b> مؤهل</h1>
+<p class="mut">نربط أسرة المريض بمتبرعين مؤهلين قريبين منهم. لا نعرض بيانات المستشفيات، ولا نبيع الدم ولا نشتريه. هدفنا أول استجابة خلال 30 دقيقة.</p>
+<div class="grid" style="margin-top:18px"><div class="card"><div class="num">1</div><b>سجّل الطلب</b><p class="mut">الفصيلة والمكوّن والمستشفى</p></div><div class="card"><div class="num" style="color:var(--teal)">2</div><b>ننبّه المتبرعين</b><p class="mut">المؤهلين والأقرب لك</p></div><div class="card"><div class="num">3</div><b>المتبرع يذهب للمستشفى</b><p class="mut">ويتبرع باسم المريض</p></div><div class="card"><div class="num" style="color:var(--teal)">4</div><b>المستشفى تؤكد بالكود</b><p class="mut">10 ثوانٍ فقط</p></div></div></section>
 
-    <style>
-      body {
-        font-family: "Cairo", sans-serif;
-        background-color: #f8fafc;
-        color: #0f172a;
-      }
-      .hero-pattern {
-        background-color: #122036;
-        background-image: radial-gradient(
-            circle at 15% 20%,
-            rgba(190, 24, 45, 0.22) 0%,
-            transparent 40%
-          ),
-          radial-gradient(
-            circle at 85% 80%,
-            rgba(13, 148, 136, 0.2) 0%,
-            transparent 45%
-          );
-      }
-      input[type="range"] {
-        accent-color: #be182d;
-      }
-    </style>
-  </head>
-  <body class="min-h-screen flex flex-col antialiased selection:bg-crimson selection:text-white">
-    <!-- Toast Notification Container -->
-    <div
-      id="toast-container"
-      class="fixed bottom-5 left-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"
-    ></div>
+<section id="request"><div class="card"><h2>سجّل طلب احتياج عاجل</h2><p class="mut">بدون إنشاء حساب. يصل الطلب إلى فريق التنسيق عبر واتساب أو البريد.</p>
+<form class="f" id="rf" onsubmit="return sendReq(event)">
+<label>الفصيلة *<select name="bt" required><option>O-</option><option>O+</option><option>A-</option><option>A+</option><option selected>B-</option><option>B+</option><option>AB-</option><option>AB+</option></select></label>
+<label>المكوّن *<select name="comp"><option>كرات دم حمراء</option><option>صفائح دموية</option><option>بلازما</option><option>دم كامل</option></select></label>
+<label>المنطقة في الفيوم *<input name="area" value="مركز الفيوم" required></label>
+<label>اسم المستشفى<input name="hosp" placeholder="اسم المستشفى أو الجهة"></label>
+<label>درجة الاستعجال<select name="urg"><option>طوارئ / حاد</option><option>خلال 24 ساعة</option><option>مجدول</option></select></label>
+<label>الاسم *<input name="name" required></label>
+<label>رقم الهاتف *<input name="phone" type="tel" required placeholder="01xxxxxxxxx"></label>
+<label>عدد الوحدات<input name="units" type="number" min="1" value="1"></label>
+<label class="full">ملاحظات<textarea name="note" rows="2"></textarea></label>
+<div class="full"><button class="red" type="submit">إرسال الطلب</button></div></form><div id="rres"></div></div></section>
 
-    <!-- ========================================================= -->
-    <!-- 1. STICKY NAVBAR                                          -->
-    <!-- ========================================================= -->
-    <header class="bg-navy/95 backdrop-blur-md text-white sticky top-0 z-40 border-b border-slate-800 shadow-md">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-4">
-        <!-- Brand Logo -->
-        <a href="#" class="flex items-center gap-3 group">
-          <div class="w-10 h-10 rounded-xl bg-crimson flex items-center justify-center shadow-md group-hover:scale-105 transition">
-            <i class="fa-solid fa-droplet text-white text-lg"></i>
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="text-xl font-black tracking-tight">Red Wave</span>
-              <span class="hidden sm:inline-block text-[11px] bg-teal/20 text-teal-200 border border-teal/30 px-2 py-0.5 rounded-full font-bold">
-                B2B SaaS
-              </span>
-            </div>
-            <p class="text-[11px] text-slate-400">إدارة مخزون الدم والتنسيق الطبي</p>
-          </div>
-        </a>
+<section id="donor"><div class="card"><h2>سجّل كمتبرع</h2><p class="mut">نتواصل معك فقط عند وجود حالة مناسبة لفصيلتك. رقمك لا يظهر للأسرة.</p>
+<form class="f" onsubmit="return sendDon(event)">
+<label>الاسم *<input name="name" required></label><label>رقم الهاتف *<input name="phone" type="tel" required></label>
+<label>الفصيلة *<select name="bt"><option>O-</option><option>O+</option><option>A-</option><option>A+</option><option>B-</option><option>B+</option><option>AB-</option><option>AB+</option></select></label>
+<label>المنطقة *<input name="area" value="مركز الفيوم" required></label>
+<label>تاريخ آخر تبرع (إن وُجد)<input name="last" type="date"></label>
+<label class="full" style="display:flex;gap:8px;align-items:center"><input type="checkbox" required style="width:auto"> أوافق على تواصل فريق ريد ويف معي عند وجود حالة مناسبة، وأعلم أن الأهلية الطبية تقررها المستشفى.</label>
+<div class="full"><button class="teal" type="submit">تسجيل</button></div></form><div id="dres"></div></div></section>
 
-        <!-- Desktop Navigation Links -->
-        <nav class="hidden lg:flex items-center gap-6 text-sm font-bold text-slate-300">
-          <a href="#problem-solution" class="hover:text-white transition">المشكلة والحل</a>
-          <a href="#components" class="hover:text-white transition">المكونات والصلاحية</a>
-          <a href="#faiyum-network" class="hover:text-white transition">شبكة الفيوم</a>
-          <a href="#roi-calculator" class="hover:text-white transition">حاسبة توفير الهدر</a>
-          <a href="#pilot-booking" class="hover:text-white transition">نموذج البيلوت</a>
-        </nav>
+<section id="map"><h2>خريطة الجهات الشريكة</h2><p class="mut">خريطة توضيحية. المواقع أمثلة وتُستبدل بالجهات الفعلية عند الاتفاق معها.</p>
+<div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px" id="flt"></div>
+<svg viewBox="0 0 600 340" width="100%" role="img" aria-label="خريطة توضيحية للفيوم"><path d="M70 150C60 80 170 30 290 40s250 20 260 110-40 150-150 160S90 280 70 150Z" fill="rgba(13,148,136,.12)" stroke="#0D9488" stroke-width="2"/><text x="300" y="175" text-anchor="middle" fill="currentColor" opacity=".35" font-size="30" font-weight="800">مركز الفيوم</text><g id="pins"></g></svg>
+<div class="grid" id="plist" style="margin-top:12px"></div></div></section>
 
-        <!-- Primary CTAs -->
-        <div class="flex items-center gap-2.5">
-          <a
-            href="dashboard.html"
-            class="hidden sm:inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white border border-white/15 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition"
-          >
-            <i class="fa-solid fa-chart-pie text-teal"></i>
-            <span>جرّب لوحة التحكم التفاعلية</span>
-          </a>
-          <a
-            href="#pilot-booking"
-            class="inline-flex items-center gap-2 bg-crimson hover:bg-crimson-dark text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold shadow-sm transition"
-          >
-            <i class="fa-solid fa-rocket"></i>
-            <span>احجز تجربة Pilot</span>
-          </a>
-        </div>
-      </div>
-    </header>
+<section id="learn"><h2>توعية: مكونات الدم والفصائل</h2><p class="mut">معلومات عامة للتوعية. القرار الطبي للطبيب وبنك الدم.</p>
+<div class="grid">
+<div class="card"><b style="color:var(--red)">كرات الدم الحمراء</b><p>تنقل الأكسجين. تُعطى في الأنيميا والنزيف والعمليات.</p><span class="tag">الصلاحية: حتى 42 يوماً (مبردة)</span></div>
+<div class="card"><b style="color:#b7791f">الصفائح الدموية</b><p>توقف النزيف. تُعطى غالباً لمرضى الأورام ونقص الصفائح.</p><span class="tag">الصلاحية: 5–7 أيام فقط</span></div>
+<div class="card"><b style="color:var(--teal)">البلازما</b><p>الجزء السائل وبه عوامل التجلط. للحروق والنزيف واضطرابات التجلط.</p><span class="tag">الصلاحية: حتى سنة (مجمدة)</span></div>
+<div class="card"><b>الدم الكامل</b><p>يحتوي كل المكونات، ويُفصل غالباً إلى مكونات.</p><span class="tag">الصلاحية: نحو 35 يوماً</span></div></div>
+<p class="mut" style="margin-top:12px">الصفائح قصيرة الصلاحية، ولذلك نحتاج متبرعين منتظمين.</p>
+<h3>من يستقبل من؟ (كرات الدم الحمراء)</h3><div class="card scroll"><table><tr><th>فصيلة المريض</th><th>يمكنه استقبال كرات حمراء من</th></tr>
+<tr><td>O-</td><td>O-</td></tr><tr><td>O+</td><td>O+ ، O-</td></tr><tr><td>A-</td><td>A- ، O-</td></tr><tr><td>A+</td><td>A+ ، A- ، O+ ، O-</td></tr><tr><td>B-</td><td>B- ، O-</td></tr><tr><td>B+</td><td>B+ ، B- ، O+ ، O-</td></tr><tr><td>AB-</td><td>AB- ، A- ، B- ، O-</td></tr><tr><td>AB+</td><td>جميع الفصائل</td></tr></table></div>
+<p class="mut">المتبرع الشامل للكرات الحمراء: O-. في البلازما يكون العكس: AB هو المتبرع الشامل.</p></section>
+<footer>ريد ويف · malakhussein635@gmail.com · مجاني تماماً للأسرة والمتبرع</footer></div></main>
 
-    <!-- ========================================================= -->
-    <!-- 2. HERO SECTION                                           -->
-    <!-- ========================================================= -->
-    <section class="hero-pattern text-white py-14 sm:py-20 border-b border-slate-800">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-        <!-- Right Column: Value Proposition Copy -->
-        <div class="lg:col-span-7 space-y-6">
-          <div class="inline-flex items-center gap-2 bg-white/10 border border-white/15 px-3.5 py-1.5 rounded-full text-xs font-bold text-rose-200">
-            <span class="w-2 h-2 rounded-full bg-crimson animate-pulse"></span>
-            <span>مصمم للمستشفيات الخاصة وبنوك الدم الداخلية — انطلاقاً من الفيوم</span>
-          </div>
+<main id="adm" class="hide"><div class="w"><section><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h2 style="margin:0">لوحة التنسيق (Admin)</h2><button onclick="location.hash=''">الواجهة العامة</button><button onclick="addDemo()">+ طلب يدوي</button></div>
+<p class="mut">الطلبات المسجلة على هذا الجهاز. الطلبات الواردة من الآخرين تصلكم على واتساب والبريد، ويمكنكم إضافتها هنا لمتابعة مهلة الـ 30 دقيقة.</p>
+<div class="card scroll"><table><thead><tr><th>الكود</th><th>الفصيلة</th><th>المكوّن</th><th>المكان</th><th>الهاتف</th><th>منذ</th><th>الحالة</th><th>متبرعون</th></tr></thead><tbody id="rows"></tbody></table></div>
+<h3>المتبرعون المسجلون: <span id="dc">0</span></h3><div class="card scroll"><table><thead><tr><th>الاسم</th><th>الفصيلة</th><th>المنطقة</th><th>آخر تبرع</th></tr></thead><tbody id="drows"></tbody></table></div></section></div></main>
 
-          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black leading-tight">
-            قلّل هدر <span class="text-rose-400">الصفائح الدموية</span> وكرات الدم الحمراء، وأمّن حالات الطوارئ في <span class="text-teal-300">دقائق</span>.
-          </h1>
-
-          <p class="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl">
-            <strong>Red Wave</strong> منصة سحابية ذكية تساعد المستشفيات الخاصة وبنوك الدم على مراقبة المخزون اللحظي، وترتيب الصرف تلقائياً بأولوية <strong>FEFO (الأقرب انتهاءً أولاً)</strong>، وتنسيق طلبات العجز العاجلة مع المستشفيات القريبة دون فوضى الاتصالات اليدوية.
-          </p>
-
-          <!-- Action Buttons -->
-          <div class="flex flex-wrap items-center gap-3.5 pt-2">
-            <a
-              href="#pilot-booking"
-              class="bg-crimson hover:bg-crimson-dark text-white px-6 py-3.5 rounded-2xl text-sm sm:text-base font-extrabold shadow-lg shadow-crimson/30 transition flex items-center gap-2.5"
-            >
-              <i class="fa-solid fa-calendar-check"></i>
-              <span>احجز تجربة Pilot مجانية (14 يوماً)</span>
-            </a>
-
-            <a
-              href="dashboard.html"
-              class="bg-white text-navy hover:bg-slate-100 px-6 py-3.5 rounded-2xl text-sm sm:text-base font-extrabold transition flex items-center gap-2.5"
-            >
-              <i class="fa-solid fa-display text-crimson"></i>
-              <span>جرّب لوحة التحكم التفاعلية</span>
-            </a>
-          </div>
-
-          <!-- Trust / Metric Strip -->
-          <div class="grid grid-cols-3 gap-4 pt-4 border-t border-slate-800/80 max-w-xl">
-            <div>
-              <p class="text-xl sm:text-2xl font-black text-teal-300">FEFO</p>
-              <p class="text-xs text-slate-400">ترتيب تلقائي لصلاحية كل كيس</p>
-            </div>
-            <div>
-              <p class="text-xl sm:text-2xl font-black text-white">5 أيام</p>
-              <p class="text-xs text-slate-400">تنبيه مبكر حرج للصفائح</p>
-            </div>
-            <div>
-              <p class="text-xl sm:text-2xl font-black text-rose-400">100%</p>
-              <p class="text-xs text-slate-400">خصوصية كاملة لبيانات المستشفى</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Left Column: Interactive Live FEFO Preview Card -->
-        <div class="lg:col-span-5">
-          <div class="bg-white text-slate-900 rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-200 space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3.5">
-              <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 rounded-xl bg-crimson-light text-crimson flex items-center justify-center">
-                  <i class="fa-solid fa-bell"></i>
-                </div>
-                <div>
-                  <h2 class="text-sm font-extrabold text-navy">معاينة حية: رادار الصلاحية FEFO</h2>
-                  <p class="text-[11px] text-slate-500">محاكاة تفاعلية لتنبيهات المكونات الثلاثة</p>
-                </div>
-              </div>
-              <span class="text-[11px] font-bold bg-teal-light text-teal px-2.5 py-1 rounded-full">
-                مباشر (Demo)
-              </span>
-            </div>
-
-            <!-- Interactive Component Switcher in Hero Card -->
-            <div class="grid grid-cols-3 gap-2 bg-slate-100 p-1.5 rounded-2xl text-xs font-bold">
-              <button
-                onclick="selectHeroDemo('Platelets')"
-                id="hero-tab-Platelets"
-                class="hero-demo-btn bg-navy text-white py-2 px-2 rounded-xl transition"
-              >
-                الصفائح (5 أيام)
-              </button>
-              <button
-                onclick="selectHeroDemo('RBC')"
-                id="hero-tab-RBC"
-                class="hero-demo-btn text-slate-600 hover:text-navy py-2 px-2 rounded-xl transition"
-              >
-                كرات حمراء (42 يوم)
-              </button>
-              <button
-                onclick="selectHeroDemo('Plasma')"
-                id="hero-tab-Plasma"
-                class="hero-demo-btn text-slate-600 hover:text-navy py-2 px-2 rounded-xl transition"
-              >
-                البلازما (365 يوم)
-              </button>
-            </div>
-
-            <!-- Dynamic Preview Content -->
-            <div id="hero-demo-content" class="space-y-3">
-              <!-- Populated by JS -->
-            </div>
-
-            <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-              <span class="text-slate-500 font-semibold">متوافق مع ملفات Excel الحالية</span>
-              <a href="index.html" class="text-crimson font-extrabold hover:underline flex items-center gap-1">
-                <span>افتح اللوحة الكاملة</span>
-                <i class="fa-solid fa-arrow-left text-[10px]"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================================= -->
-    <!-- 3. THE PROBLEM VS. RED WAVE SOLUTION                      -->
-    <!-- ========================================================= -->
-    <section id="problem-solution" class="py-16 sm:py-20 bg-white border-b border-slate-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
-        <div class="text-center max-w-3xl mx-auto space-y-3">
-          <span class="text-xs font-extrabold text-crimson bg-crimson-light px-3.5 py-1 rounded-full">
-            لماذا تحتاج المستشفيات الخاصة إلى Red Wave؟
-          </span>
-          <h2 class="text-2xl sm:text-3xl font-black text-navy">
-            من الدفاتر الورقية والاتصالات العشوائية إلى التحكم اللحظي
-          </h2>
-          <p class="text-sm sm:text-base text-slate-600">
-            في غرف العمليات والطوارئ والرعاية المركزة، كل ساعة تأخير أو كيس منتهي الصلاحية يمثل تكلفة طبية ومالية مباشرة.
-          </p>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <!-- Current Pain / Status Quo -->
-          <div class="bg-slate-50 rounded-3xl p-6 sm:p-8 border border-slate-200 space-y-5">
-            <div class="flex items-center gap-3">
-              <div class="w-11 h-11 rounded-2xl bg-rose-100 text-crimson flex items-center justify-center text-lg">
-                <i class="fa-solid fa-circle-xmark"></i>
-              </div>
-              <div>
-                <h3 class="text-lg font-extrabold text-navy">الوضع التقليدي الحالي</h3>
-                <p class="text-xs text-slate-500">كيف تدار معظم بنوك الدم الداخلية اليوم</p>
-              </div>
-            </div>
-
-            <ul class="space-y-4 text-sm text-slate-700">
-              <li class="flex items-start gap-3 bg-white p-4 rounded-2xl border border-slate-200/80">
-                <i class="fa-solid fa-book text-crimson mt-1"></i>
-                <div>
-                  <strong class="block text-navy">دفاتر ورقية وشيتات منفصلة</strong>
-                  <span class="text-xs text-slate-500">صعوبة معرفة الرصيد الدقيق لحظة تسليم الورديات واحتمالية السهو عن تواريخ الانتهاء.</span>
-                </div>
-              </li>
-              <li class="flex items-start gap-3 bg-white p-4 rounded-2xl border border-slate-200/80">
-                <i class="fa-solid fa-trash-can text-crimson mt-1"></i>
-                <div>
-                  <strong class="block text-navy">هدر مرتفع في الصفائح الدموية</strong>
-                  <span class="text-xs text-slate-500">صلاحية الصفائح 5 أيام فقط؛ دون تنبيه مبكر تُعدم وحدات بتكلفة مالية وتشغيلية عالية.</span>
-                </div>
-              </li>
-              <li class="flex items-start gap-3 bg-white p-4 rounded-2xl border border-slate-200/80">
-                <i class="fa-solid fa-phone-volume text-crimson mt-1"></i>
-                <div>
-                  <strong class="block text-navy">عشوائية البحث وقت الطوارئ</strong>
-                  <span class="text-xs text-slate-500">إضاعة وقت حرج في عشرات المكالمات للسؤال عن توافر فصيلة نادرة أو مكون عاجل.</span>
-                </div>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Red Wave Solution -->
-          <div class="bg-navy text-white rounded-3xl p-6 sm:p-8 shadow-xl space-y-5 relative overflow-hidden">
-            <div class="flex items-center gap-3">
-              <div class="w-11 h-11 rounded-2xl bg-teal text-white flex items-center justify-center text-lg">
-                <i class="fa-solid fa-circle-check"></i>
-              </div>
-              <div>
-                <h3 class="text-lg font-extrabold text-white">الحل مع منظومة Red Wave</h3>
-                <p class="text-xs text-teal-200">تشغيل ذكي، سريع، ومحافظ على الخصوصية</p>
-              </div>
-            </div>
-
-            <ul class="space-y-4 text-sm">
-              <li class="flex items-start gap-3 bg-white/10 p-4 rounded-2xl border border-white/10">
-                <i class="fa-solid fa-layer-group text-teal-300 mt-1"></i>
-                <div>
-                  <strong class="block text-white">لوحة مخزون لحظية ومزامنة Excel</strong>
-                  <span class="text-xs text-slate-300">رؤية فورية لكل فصيلة ومكون، مع استيراد وتصدير ملفات Excel بضغطة زر دون تعقيد.</span>
-                </div>
-              </li>
-              <li class="flex items-start gap-3 bg-white/10 p-4 rounded-2xl border border-white/10">
-                <i class="fa-solid fa-stopwatch text-amber-300 mt-1"></i>
-                <div>
-                  <strong class="block text-white">أولوية صرف تلقائية (FEFO Engine)</strong>
-                  <span class="text-xs text-slate-300">ترتيب الأكياس الأقرب انتهاءً تلقائياً وتنبيه الفريق قبل انتهاء الصلاحية بوقت كافٍ.</span>
-                </div>
-              </li>
-              <li class="flex items-start gap-3 bg-white/10 p-4 rounded-2xl border border-white/10">
-                <i class="fa-solid fa-truck-medical text-rose-400 mt-1"></i>
-                <div>
-                  <strong class="block text-white">شبكة تنسيق وتبادل محلية منظمة</strong>
-                  <span class="text-xs text-slate-300">طلب وحدات عاجلة أو توجيه الفائض القريب من الانتهاء للمستشفيات المجاورة مع حفظ خصوصية البيانات.</span>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================================= -->
-    <!-- 4. BLOOD COMPONENTS & SHELF-LIFE INTELLIGENCE             -->
-    <!-- ========================================================= -->
-    <section id="components" class="py-16 sm:py-20 bg-slate-50 border-b border-slate-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
-        <div class="text-center max-w-3xl mx-auto space-y-3">
-          <span class="text-xs font-extrabold text-teal bg-teal-light px-3.5 py-1 rounded-full">
-            دقة طبية مخصصة لكل مشتق
-          </span>
-          <h2 class="text-2xl sm:text-3xl font-black text-navy">
-            إدارة ذكية تراعي طبيعة وصلاحية كل مكون دموي
-          </h2>
-          <p class="text-sm sm:text-base text-slate-600">
-            كل مكون في بنك الدم له شروط حفظ وعمر افتراضي مختلف؛ لذلك يضبط Red Wave قواعد التنبيه والصرف لكل مكون على حدة.
-          </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <!-- Card 1: RBCs -->
-          <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 hover:border-crimson/40 transition flex flex-col justify-between space-y-5">
-            <div class="space-y-4">
-              <div class="flex items-center justify-between">
-                <div class="w-12 h-12 rounded-2xl bg-crimson-light text-crimson flex items-center justify-center text-xl">
-                  <i class="fa-solid fa-droplet"></i>
-                </div>
-                <span class="text-xs font-extrabold bg-slate-100 text-navy px-3 py-1 rounded-full">
-                  حتى 42 يوماً
-                </span>
-              </div>
-              <div>
-                <h3 class="text-xl font-extrabold text-navy">كرات الدم الحمراء (RBCs)</h3>
-                <p class="text-xs text-slate-500 mt-1">العمود الفقري لحالات الجراحة والطوارئ والنزيف الحاد</p>
-              </div>
-              <div class="bg-slate-50 rounded-2xl p-3.5 space-y-2 text-xs">
-                <div class="flex justify-between">
-                  <span class="text-slate-500 font-semibold">درجة الحفظ:</span>
-                  <span class="font-extrabold text-navy">2°C إلى 6°C (ثلاجة بنوك الدم)</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-slate-500 font-semibold">نقطة الخطر:</span>
-                  <span class="font-bold text-crimson">نقص الفصائل السالبة (O-, A-, B-)</span>
-                </div>
-              </div>
-            </div>
-            <p class="text-xs text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
-              يراقب النظام معدل السحب اليومي (Burn Rate) وينبه قبل انخفاض الرصيد عن الحد الآمن لكل فصيلة.
-            </p>
-          </div>
-
-          <!-- Card 2: Platelets (Highlighted High Risk) -->
-          <div class="bg-white rounded-3xl p-6 shadow-md border-2 border-amber-400 relative flex flex-col justify-between space-y-5">
-            <div class="space-y-4">
-              <div class="flex items-center justify-between">
-                <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
-                  <i class="fa-solid fa-certificate"></i>
-                </div>
-                <span class="text-xs font-extrabold bg-amber-100 text-amber-900 px-3 py-1 rounded-full">
-                  5 أيام فقط — أعلى خطر هدر
-                </span>
-              </div>
-              <div>
-                <h3 class="text-xl font-extrabold text-navy">الصفائح الدموية (Platelets)</h3>
-                <p class="text-xs text-slate-500 mt-1">حرجة لمرضى الأورام، النزيف، والرعاية المركزة</p>
-              </div>
-              <div class="bg-amber-50/70 rounded-2xl p-3.5 space-y-2 text-xs">
-                <div class="flex justify-between">
-                  <span class="text-slate-600 font-semibold">درجة الحفظ:</span>
-                  <span class="font-extrabold text-navy">20°C – 24°C مع رجّ مستمر</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-slate-600 font-semibold">قاعدة Red Wave:</span>
-                  <span class="font-extrabold text-amber-800">إنذار FEFO قبل 48 ساعة</span>
-                </div>
-              </div>
-            </div>
-            <p class="text-xs text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
-              الأولوية القصوى في النظام لمنع إعدام الصفائح عبر تنبيه الصرف المبكر أو عرضها للتبادل السريع.
-            </p>
-          </div>
-
-          <!-- Card 3: Plasma -->
-          <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 hover:border-sky-400/50 transition flex flex-col justify-between space-y-5">
-            <div class="space-y-4">
-              <div class="flex items-center justify-between">
-                <div class="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl">
-                  <i class="fa-solid fa-snowflake"></i>
-                </div>
-                <span class="text-xs font-extrabold bg-sky-50 text-sky-800 px-3 py-1 rounded-full">
-                  حتى 365 يوماً (FFP)
-                </span>
-              </div>
-              <div>
-                <h3 class="text-xl font-extrabold text-navy">البلازما الطازجة (Plasma)</h3>
-                <p class="text-xs text-slate-500 mt-1">أساسية لحالات التجلط، الحروق، والعمليات الكبرى</p>
-              </div>
-              <div class="bg-slate-50 rounded-2xl p-3.5 space-y-2 text-xs">
-                <div class="flex justify-between">
-                  <span class="text-slate-500 font-semibold">درجة الحفظ:</span>
-                  <span class="font-extrabold text-navy">-18°C أو أقل (تجميد عميق)</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-slate-500 font-semibold">دور النظام:</span>
-                  <span class="font-bold text-teal">تتبع الدفعات وتقليل التكدس</span>
-                </div>
-              </div>
-            </div>
-            <p class="text-xs text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
-              تنظيم أرصدة الفريزر حسب الفصيلة وتاريخ التجميد لتسهيل الجرد وتلبية الطلبات المجمعة بسرعة.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================================= -->
-    <!-- 5. FAIYUM PILOT NETWORK & ICP                             -->
-    <!-- ========================================================= -->
-    <section id="faiyum-network" class="py-16 sm:py-20 bg-white border-b border-slate-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
-        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-          <div class="space-y-3 max-w-2xl">
-            <span class="text-xs font-extrabold text-crimson bg-crimson-light px-3.5 py-1 rounded-full">
-              عميلنا المثالي (ICP) ونطاق الانطلاق
-            </span>
-            <h2 class="text-2xl sm:text-3xl font-black text-navy">
-              شبكة المستشفيات الخاصة والتخصصية في محافظة الفيوم
-            </h2>
-            <p class="text-sm sm:text-base text-slate-600">
-              نبدأ بالمستشفيات الخاصة والتخصصية (60–150 سرير) التي تضم بنك دم داخلي وأقسام جراحة وطوارئ، لسرعة القرار ووضوح العائد المالي والتشغيلي.
-            </p>
-          </div>
-          <div class="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 text-xs text-amber-900 font-bold max-w-md">
-            <i class="fa-solid fa-shield-halved text-amber-600 ml-1.5"></i>
-            الجهات التالية تمثل نطاق الاستهداف الميداني والـ Pilot في الفيوم (بيانات العرض الحالية تجريبية للتحقق الميداني).
-          </div>
-        </div>
-
-        <!-- 4 Private Hospitals Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-[11px] font-extrabold bg-teal-light text-teal px-2.5 py-0.5 rounded-full">مستشفى خاص تخصصي</span>
-              <span class="text-[11px] font-bold text-slate-400">Pilot Target</span>
-            </div>
-            <h3 class="text-base font-extrabold text-navy">مستشفى الندى التخصصي</h3>
-            <p class="text-xs text-slate-500"><i class="fa-solid fa-location-dot text-crimson ml-1"></i> شارع النبوي المهندس — الفيوم</p>
-            <p class="text-xs text-slate-600 pt-2 border-t border-slate-200/70">
-              نشاط جراحي ونساء وتوليد وطوارئ على مدار 24 ساعة.
-            </p>
-          </div>
-
-          <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-[11px] font-extrabold bg-teal-light text-teal px-2.5 py-0.5 rounded-full">مستشفى خاص</span>
-              <span class="text-[11px] font-bold text-slate-400">Pilot Target</span>
-            </div>
-            <h3 class="text-base font-extrabold text-navy">مستشفى الزهراء</h3>
-            <p class="text-xs text-slate-500"><i class="fa-solid fa-location-dot text-crimson ml-1"></i> شارع الجزائر — قسم الفيوم</p>
-            <p class="text-xs text-slate-600 pt-2 border-t border-slate-200/70">
-              تغطية طبية وجراحية مستمرة واحتياج دوري لمكونات الدم.
-            </p>
-          </div>
-
-          <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-[11px] font-extrabold bg-teal-light text-teal px-2.5 py-0.5 rounded-full">مستشفى خاص تخصصي</span>
-              <span class="text-[11px] font-bold text-slate-400">Pilot Target</span>
-            </div>
-            <h3 class="text-base font-extrabold text-navy">مستشفى الصفوة التخصصي</h3>
-            <p class="text-xs text-slate-500"><i class="fa-solid fa-location-dot text-crimson ml-1"></i> شارع السلخانة — ثان الفيوم</p>
-            <p class="text-xs text-slate-600 pt-2 border-t border-slate-200/70">
-              عمل على مدار 24 ساعة مع قرب جغرافي يسهل التبادل السريع.
-            </p>
-          </div>
-
-          <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-[11px] font-extrabold bg-teal-light text-teal px-2.5 py-0.5 rounded-full">مستشفى خاص تخصصي</span>
-              <span class="text-[11px] font-bold text-slate-400">Pilot Target</span>
-            </div>
-            <h3 class="text-base font-extrabold text-navy">مستشفى عرفة التخصصي</h3>
-            <p class="text-xs text-slate-500"><i class="fa-solid fa-location-dot text-crimson ml-1"></i> قسم أول الفيوم</p>
-            <p class="text-xs text-slate-600 pt-2 border-t border-slate-200/70">
-              استقبال حالات طوارئ وجراحات تتطلب جاهزية مخزون لحظية.
-            </p>
-          </div>
-        </div>
-
-        <!-- 3-Step Pilot Onboarding Timeline -->
-        <div class="bg-navy text-white rounded-3xl p-6 sm:p-8">
-          <h3 class="text-lg sm:text-xl font-extrabold mb-6 text-center">
-            كيف نبدأ مع مستشفاكم في 3 خطوات بسيطة دون تعطيل العمل؟
-          </h3>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white/10 rounded-2xl p-5 border border-white/10 space-y-2">
-              <span class="inline-block bg-crimson text-white text-xs font-black px-3 py-1 rounded-full">الخطوة 1 • اليوم الأول</span>
-              <h4 class="text-base font-extrabold">مزامنة شيت المخزون الحالي</h4>
-              <p class="text-xs text-slate-300 leading-relaxed">
-                نرفع أرصدة الكرات والصفائح والبلازما الحالية من ملف Excel أو السجل الموجود لديكم في أقل من 30 دقيقة.
-              </p>
-            </div>
-            <div class="bg-white/10 rounded-2xl p-5 border border-white/10 space-y-2">
-              <span class="inline-block bg-teal text-white text-xs font-black px-3 py-1 rounded-full">الخطوة 2 • أسبوعان Pilot</span>
-              <h4 class="text-base font-extrabold">تفعيل تنبيهات FEFO والتنسيق</h4>
-              <p class="text-xs text-slate-300 leading-relaxed">
-                يستخدم أخصائي بنك الدم اللوحة لمتابعة الصلاحية وصرف الأقرب انتهاءً أولاً مع تجربة طلبات الشبكة.
-              </p>
-            </div>
-            <div class="bg-white/10 rounded-2xl p-5 border border-white/10 space-y-2">
-              <span class="inline-block bg-amber-400 text-navy text-xs font-black px-3 py-1 rounded-full">الخطوة 3 • تقييم العائد</span>
-              <h4 class="text-base font-extrabold">تقرير الوفر والقرار النهائي</h4>
-              <p class="text-xs text-slate-300 leading-relaxed">
-                نستعرض مع الإدارة عدد الوحدات التي تم إنقاذها من الانتهاء ووقت الاستجابة قبل الانتقال للاشتراك الشهري.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================================= -->
-    <!-- 6. INTERACTIVE ROI / WASTE REDUCTION ESTIMATOR            -->
-    <!-- ========================================================= -->
-    <section id="roi-calculator" class="py-16 sm:py-20 bg-slate-50 border-b border-slate-200">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 space-y-8">
-        <div class="text-center max-w-2xl mx-auto space-y-3">
-          <span class="text-xs font-extrabold text-teal bg-teal-light px-3.5 py-1 rounded-full">
-            حاسبة العائد التشغيلي للمستشفيات الخاصة
-          </span>
-          <h2 class="text-2xl sm:text-3xl font-black text-navy">
-            احسب حجم الوحدات التي يمكن إنقاذها من الهدر سنوياً
-          </h2>
-          <p class="text-sm text-slate-600">
-            حرّك المؤشرات التالية بناءً على متوسط استهلاك مستشفاكم الشهري من مكونات الدم (خاصة الصفائح وكرات الدم الحمراء).
-          </p>
-        </div>
-
-        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-md border border-slate-200 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          <!-- Sliders -->
-          <div class="lg:col-span-7 space-y-6">
-            <div>
-              <div class="flex justify-between text-sm font-bold mb-2">
-                <label for="slider-units" class="text-navy">متوسط الوحدات المتداولة شهرياً في المستشفى:</label>
-                <span id="val-units" class="text-crimson font-black text-base">350 وحدة</span>
-              </div>
-              <input
-                type="range"
-                id="slider-units"
-                min="60"
-                max="1200"
-                step="10"
-                value="350"
-                oninput="updateROICalculator()"
-                class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer"
-              />
-              <div class="flex justify-between text-[11px] text-slate-400 mt-1">
-                <span>60 وحدة (مستشفى صغير)</span>
-                <span>600 وحدة</span>
-                <span>1200 وحدة (مستشفى كبير)</span>
-              </div>
-            </div>
-
-            <div>
-              <div class="flex justify-between text-sm font-bold mb-2">
-                <label for="slider-waste" class="text-navy">نسبة الهدر الحالية بسبب انتهاء الصلاحية:</label>
-                <span id="val-waste" class="text-amber-600 font-black text-base">5%</span>
-              </div>
-              <input
-                type="range"
-                id="slider-waste"
-                min="1"
-                max="15"
-                step="1"
-                value="5"
-                oninput="updateROICalculator()"
-                class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer"
-              />
-              <div class="flex justify-between text-[11px] text-slate-400 mt-1">
-                <span>1% (رقابة صارمة)</span>
-                <span>8%</span>
-                <span>15% (هدر مرتفع في الصفائح)</span>
-              </div>
-            </div>
-
-            <div>
-              <div class="flex justify-between text-sm font-bold mb-2">
-                <label for="slider-recovery" class="text-navy">نسبة تقليل الهدر المتوقعة مع تنبيهات FEFO:</label>
-                <span id="val-recovery" class="text-teal font-black text-base">65%</span>
-              </div>
-              <input
-                type="range"
-                id="slider-recovery"
-                min="30"
-                max="85"
-                step="5"
-                value="65"
-                oninput="updateROICalculator()"
-                class="w-full h-2 bg-slate-200 rounded-lg cursor-pointer"
-              />
-              <div class="flex justify-between text-[11px] text-slate-400 mt-1">
-                <span>30% (تقدير متحفظ)</span>
-                <span>60%</span>
-                <span>85% (مع التبادل الشبكي)</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Output Results Card -->
-          <div class="lg:col-span-5 bg-navy text-white rounded-2xl p-6 space-y-5">
-            <p class="text-xs font-bold text-teal-300 uppercase tracking-wide">
-              الأثر التقديري لمنظومة Red Wave
-            </p>
-
-            <div class="border-b border-slate-700 pb-4">
-              <p class="text-xs text-slate-300">وحدات يتم إنقاذها شهرياً:</p>
-              <p id="res-monthly-saved" class="text-3xl sm:text-4xl font-black text-white mt-1">
-                11 وحدة
-              </p>
-            </div>
-
-            <div class="border-b border-slate-700 pb-4">
-              <p class="text-xs text-slate-300">إجمالي الوحدات المنقذة سنوياً:</p>
-              <p id="res-yearly-saved" class="text-3xl font-black text-teal-300 mt-1">
-                137 وحدة / سنة
-              </p>
-            </div>
-
-            <p class="text-[11px] text-slate-400 leading-relaxed">
-              * تقدير استرشادي يوضح كيف يغطي تقليل إعدام الصفائح وكرات الدم الحمراء تكلفة الاشتراك الشهري للمستشفى ويحقق وفراً مباشراً.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================================= -->
-    <!-- 7. PILOT REQUEST FORM & FOOTER                            -->
-    <!-- ========================================================= -->
-    <section id="pilot-booking" class="py-16 sm:py-20 bg-white">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-        <!-- Left Info -->
-        <div class="lg:col-span-5 space-y-5">
-          <span class="text-xs font-extrabold text-crimson bg-crimson-light px-3.5 py-1 rounded-full">
-            ابدأ التجربة الآن
-          </span>
-          <h2 class="text-2xl sm:text-3xl font-black text-navy leading-snug">
-            احجز تجربة Pilot مجانية لمدة 14 يوماً لمستشفاكم
-          </h2>
-          <p class="text-sm text-slate-600 leading-relaxed">
-            مخصصة لمديري المستشفيات الخاصة، المديرين الطبيين، ومشرفي بنوك الدم والمعامل في محافظة الفيوم. لا يتطلب تثبيت خوادم أو ربط أنظمة معقدة.
-          </p>
-
-          <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3 text-xs">
-            <div class="flex items-center gap-2.5 font-bold text-navy">
-              <i class="fa-solid fa-check-circle text-teal text-base"></i>
-              <span>بدون أي التزام مالي خلال فترة التجربة</span>
-            </div>
-            <div class="flex items-center gap-2.5 font-bold text-navy">
-              <i class="fa-solid fa-check-circle text-teal text-base"></i>
-              <span>تدريب عملي لفريق بنك الدم في أقل من ساعة</span>
-            </div>
-            <div class="flex items-center gap-2.5 font-bold text-navy">
-              <i class="fa-solid fa-check-circle text-teal text-base"></i>
-              <span>خصوصية كاملة لبيانات وأرصدة المستشفى</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right Form -->
-        <div class="lg:col-span-7 bg-slate-50 rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm">
-          <form onsubmit="submitPilotRequest(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1.5">اسم المسؤول *</label>
-              <input
-                type="text"
-                id="pilot-name"
-                required
-                placeholder="د. / أ. الاسم بالكامل"
-                class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-crimson"
-              />
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1.5">المسمى الوظيفي *</label>
-              <select
-                id="pilot-role"
-                class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-navy focus:outline-none focus:border-crimson"
-              >
-                <option value="مدير بنك الدم / مشرف المعمل">مدير بنك الدم / مشرف المعمل</option>
-                <option value="المدير الطبي / مدير المستشفى">المدير الطبي / مدير المستشفى</option>
-                <option value="مدير التشغيل / الجودة">مدير التشغيل / الجودة</option>
-                <option value="أخصائي تحاليل طبية">أخصائي تحاليل طبية</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1.5">اسم المستشفى / المركز الطبي *</label>
-              <input
-                type="text"
-                id="pilot-hospital"
-                required
-                placeholder="مثال: مستشفى الندى التخصصي"
-                class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-crimson"
-              />
-            </div>
-
-            <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1.5">رقم الهاتف / واتساب للتنسيق *</label>
-              <input
-                type="tel"
-                id="pilot-phone"
-                required
-                placeholder="010xxxxxxxx"
-                class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-crimson"
-              />
-            </div>
-
-            <div class="sm:col-span-2">
-              <label class="block text-xs font-bold text-slate-700 mb-1.5">أكبر تحدٍ تواجهونه حالياً (اختياري)</label>
-              <textarea
-                id="pilot-challenge"
-                rows="3"
-                placeholder="مثال: متابعة صلاحية الصفائح الدموية، أو سرعة توفير الفصائل النادرة وقت الطوارئ..."
-                class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-crimson"
-              ></textarea>
-            </div>
-
-            <div class="sm:col-span-2 pt-2">
-              <button
-                type="submit"
-                class="w-full bg-crimson hover:bg-crimson-dark text-white font-extrabold py-3.5 px-6 rounded-2xl text-sm sm:text-base shadow-md transition flex items-center justify-center gap-2"
-              >
-                <i class="fa-solid fa-paper-plane"></i>
-                <span>إرسال طلب حجز تجربة Pilot</span>
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-navy text-slate-300 py-10 border-t border-slate-800 mt-auto">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-crimson flex items-center justify-center text-white">
-            <i class="fa-solid fa-droplet"></i>
-          </div>
-          <div>
-            <p class="text-lg font-black text-white">Red Wave</p>
-            <p class="text-xs text-slate-400">منظومة ذكية لإدارة مخزون بنوك الدم وتقليل الهدر — الفيوم، مصر</p>
-          </div>
-        </div>
-
-        <div class="flex flex-wrap items-center justify-center gap-4 text-xs font-bold">
-          <a href="index.html" class="hover:text-white transition">لوحة التحكم التفاعلية (MVP)</a>
-          <span class="text-slate-600">•</span>
-          <a href="mailto:malakhussein635@gmail.com?subject=تواصل%20بخصوص%20Red%20Wave" class="text-teal-300 hover:underline flex items-center gap-1.5">
-            <i class="fa-solid fa-envelope"></i>
-            <span>malakhussein635@gmail.com</span>
-          </a>
-        </div>
-      </div>
-    </footer>
-
-    <!-- Interactive Script -->
-    <script>
-      const HERO_DEMOS = {
-        Platelets: {
-          badge: "تنبيه FEFO حرج • صلاحية 5 أيام",
-          badgeClass: "bg-amber-100 text-amber-900",
-          storage: "20°C – 24°C مع جهاز رجّ مستمر",
-          items: [
-            {
-              hospital: "مستشفى الصفوة التخصصي",
-              blood: "AB-",
-              units: "2 وحدة",
-              timeLeft: "متبقي 24 ساعة",
-              action: "صرف عاجل أو تحويل لأقرب حالة",
-            },
-            {
-              hospital: "مستشفى الندى التخصصي",
-              blood: "A+",
-              units: "6 وحدات",
-              timeLeft: "متبقي 48 ساعة",
-              action: "أولوية صرف رقم 1 اليوم",
-            },
-          ],
-        },
-        RBC: {
-          badge: "مراقبة الرصيد • صلاحية حتى 42 يوماً",
-          badgeClass: "bg-crimson-light text-crimson",
-          storage: "2°C – 6°C داخل ثلاجات بنوك الدم",
-          items: [
-            {
-              hospital: "مستشفى الندى التخصصي",
-              blood: "O-",
-              units: "4 وحدات",
-              timeLeft: "تحت الحد الآمن (6)",
-              action: "متاح 7 وحدات في الشبكة للتحويل",
-            },
-            {
-              hospital: "مستشفى الزهراء",
-              blood: "O+",
-              units: "16 وحدة",
-              timeLeft: "رصيد آمن (23 يوم)",
-              action: "تغطية مستقرة للعمليات",
-            },
-          ],
-        },
-        Plasma: {
-          badge: "تتبع التجميد • صلاحية حتى 365 يوماً",
-          badgeClass: "bg-sky-100 text-sky-900",
-          storage: "-18°C أو أقل (فريزر البلازما)",
-          items: [
-            {
-              hospital: "مستشفى الزهراء",
-              blood: "A+",
-              units: "18 وحدة",
-              timeLeft: "مخزون مستقر",
-              action: "مرتب حسب أقدم تاريخ تجميد",
-            },
-            {
-              hospital: "مستشفى الصفوة التخصصي",
-              blood: "O-",
-              units: "12 وحدة",
-              timeLeft: "جاهز للطوارئ",
-              action: "متاح للتنسيق مع مستشفيات الفيوم",
-            },
-          ],
-        },
-      };
-
-      function selectHeroDemo(type) {
-        ["Platelets", "RBC", "Plasma"].forEach((t) => {
-          const btn = document.getElementById(`hero-tab-${t}`);
-          if (t === type) {
-            btn.classList.add("bg-navy", "text-white");
-            btn.classList.remove("text-slate-600");
-          } else {
-            btn.classList.remove("bg-navy", "text-white");
-            btn.classList.add("text-slate-600");
-          }
-        });
-
-        const data = HERO_DEMOS[type];
-        const container = document.getElementById("hero-demo-content");
-        container.innerHTML = `
-          <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-50 px-3 py-2 rounded-xl text-[11px]">
-            <span class="${data.badgeClass} font-extrabold px-2.5 py-0.5 rounded-full">${data.badge}</span>
-            <span class="text-slate-500 font-semibold"><i class="fa-solid fa-temperature-low ml-1 text-teal"></i>${data.storage}</span>
-          </div>
-          ${data.items
-            .map(
-              (item) => `
-              <div class="p-3.5 rounded-2xl border border-slate-200 bg-white flex items-center justify-between gap-3">
-                <div>
-                  <p class="text-xs font-extrabold text-navy">${item.hospital}</p>
-                  <p class="text-[11px] text-slate-500 mt-0.5">${item.action}</p>
-                </div>
-                <div class="text-left shrink-0">
-                  <span class="inline-block bg-crimson-light text-crimson font-black text-xs px-2.5 py-0.5 rounded-lg">${item.blood} • ${item.units}</span>
-                  <span class="block text-[10px] font-bold text-slate-500 mt-1">${item.timeLeft}</span>
-                </div>
-              </div>
-            `
-            )
-            .join("")}
-        `;
-      }
-
-      function updateROICalculator() {
-        const units = parseInt(document.getElementById("slider-units").value, 10);
-        const wastePct = parseInt(document.getElementById("slider-waste").value, 10);
-        const recoveryPct = parseInt(document.getElementById("slider-recovery").value, 10);
-
-        document.getElementById("val-units").textContent = `${units} وحدة`;
-        document.getElementById("val-waste").textContent = `${wastePct}%`;
-        document.getElementById("val-recovery").textContent = `${recoveryPct}%`;
-
-        const monthlyWasted = units * (wastePct / 100);
-        const monthlySaved = Math.max(1, Math.round(monthlyWasted * (recoveryPct / 100)));
-        const yearlySaved = monthlySaved * 12;
-
-        document.getElementById("res-monthly-saved").textContent = `${monthlySaved} وحدة`;
-        document.getElementById("res-yearly-saved").textContent = `${yearlySaved} وحدة / سنة`;
-      }
-
-      function showToast(msg) {
-        const container = document.getElementById("toast-container");
-        const el = document.createElement("div");
-        el.className =
-          "bg-navy text-white border-r-4 border-teal px-4 py-3 rounded-xl shadow-xl text-xs font-bold pointer-events-auto";
-        el.innerHTML = `<i class="fa-solid fa-circle-check text-teal ml-1.5"></i> ${msg}`;
-        container.appendChild(el);
-        setTimeout(() => el.remove(), 4000);
-      }
-
-      function submitPilotRequest(e) {
-        e.preventDefault();
-        const name = document.getElementById("pilot-name").value;
-        const hospital = document.getElementById("pilot-hospital").value;
-        showToast(`شكراً ${name}! تم تسجيل طلب تجربة Pilot لـ (${hospital}) وسنتواصل معكم قريباً.`);
-        e.target.reset();
-      }
-
-      document.addEventListener("DOMContentLoaded", () => {
-        selectHeroDemo("Platelets");
-        updateROICalculator();
-      });
-    </script>
-  </body>
-</html>
+<script>
+var WA="01062681138",MAIL="malakhussein635@gmail.com";
+function L(k){try{return JSON.parse(localStorage.getItem(k)||"[]")}catch(e){return[]}}
+function S(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function go(id){document.getElementById(id).scrollIntoView()}
+function wa(num,msg){var n=String(num).replace(/\D/g,"");if(n.charAt(0)==="0")n="20"+n.slice(1);return"https://wa.me/"+n+"?text="+encodeURIComponent(msg)}
+function links(msg,sub){var h="";if(WA)h+='<a class="btn teal" target="_blank" rel="noopener" href="'+wa(WA,msg)+'">إرسال عبر واتساب</a> ';return h+'<a class="btn red" href="mailto:'+MAIL+'?subject='+encodeURIComponent(sub)+'&body='+encodeURIComponent(msg)+'">إرسال عبر البريد</a>'}
+function fd(e){e.preventDefault();var o={};new FormData(e.target).forEach(function(v,k){o[k]=v});return o}
+function sendReq(e){var o=fd(e),a=L("rw_req");o.code="RW-FYM-"+(100+a.length+1);o.t=Date.now();o.st="جديد";a.push(o);S("rw_req",a);
+var m="طلب دم "+o.code+"\nالفصيلة: "+o.bt+"\nالمكوّن: "+o.comp+"\nالوحدات: "+o.units+"\nالمنطقة: "+o.area+"\nالمستشفى: "+o.hosp+"\nالاستعجال: "+o.urg+"\nالاسم: "+o.name+"\nالهاتف: "+o.phone+"\nملاحظات: "+o.note;
+document.getElementById("rres").innerHTML='<div class="ok"><b>تم تجهيز طلبك. كودك: '+esc(o.code)+'</b><p>اضغط لإرساله لفريق التنسيق ليبدأ العمل عليه فوراً:</p>'+links(m,"طلب دم "+o.code)+'</div>';return false}
+function sendDon(e){var o=fd(e),a=L("rw_don");o.t=Date.now();a.push(o);S("rw_don",a);
+var m="تسجيل متبرع\nالاسم: "+o.name+"\nالفصيلة: "+o.bt+"\nالمنطقة: "+o.area+"\nالهاتف: "+o.phone+"\nآخر تبرع: "+o.last;
+document.getElementById("dres").innerHTML='<div class="ok"><b>شكراً لك. أرسل تسجيلك للفريق:</b><p></p>'+links(m,"تسجيل متبرع جديد")+'</div>';return false}
+var PINS=[{t:"h",n:"مستشفى (مثال 1)",x:300,y:120},{t:"h",n:"مستشفى (مثال 2)",x:430,y:200},{t:"p",n:"صيدلية (مثال 1)",x:260,y:200},{t:"p",n:"صيدلية (مثال 2)",x:370,y:90},{t:"l",n:"معمل (مثال 1)",x:170,y:150},{t:"l",n:"معمل (مثال 2)",x:480,y:130}];
+var C={h:"#BE182D",p:"#0D9488",l:"#d98a00"},N={h:"مستشفيات",p:"صيدليات",l:"معامل"},on={h:1,p:1,l:1};
+function drawMap(){var f=document.getElementById("flt");f.innerHTML="";["h","p","l"].forEach(function(k){var b=document.createElement("button");b.textContent=N[k];b.style.cssText=on[k]?"background:"+C[k]+";color:#fff":"";b.onclick=function(){on[k]=!on[k];drawMap()};f.appendChild(b)});
+var g="",l="";PINS.forEach(function(p){if(!on[p.t])return;g+='<circle cx="'+p.x+'" cy="'+p.y+'" r="10" fill="'+C[p.t]+'"/><text x="'+p.x+'" y="'+(p.y-15)+'" text-anchor="middle" font-size="13" fill="currentColor">'+esc(p.n)+'</text>';l+='<div class="card" style="padding:10px"><span style="color:'+C[p.t]+'">●</span> '+esc(p.n)+'</div>'});
+document.getElementById("pins").innerHTML=g;document.getElementById("plist").innerHTML=l}
+function ago(t){var m=Math.floor((Date.now()-t)/60000);return m<60?m+" د":Math.floor(m/60)+" س"}
+function drawAdm(){var r=L("rw_req"),d=L("rw_don"),h="";r.slice().reverse().forEach(function(o){var late=o.st!=="تم"&&Date.now()-o.t>1800000,m=d.filter(function(x){return x.bt===o.bt}),inv=m.slice(0,3).map(function(x){return'<a href="'+wa(x.phone,"مريض يحتاج متبرع "+o.bt+" ("+o.code+") في "+o.area+". هل تستطيع المساعدة؟")+'" target="_blank" rel="noopener">'+esc(x.name)+"</a>"}).join("، ")||"—";
+h+="<tr><td>"+esc(o.code)+"</td><td>"+esc(o.bt)+"</td><td>"+esc(o.comp)+"</td><td>"+esc(o.area)+" "+esc(o.hosp)+"</td><td>"+esc(o.phone)+"</td><td"+(late?' style="color:var(--red);font-weight:800"':"")+">"+ago(o.t)+(late?" ⚠":"")+'</td><td><select data-c="'+esc(o.code)+'">'+["جديد","قيد التنسيق","تم","ملغي"].map(function(s){return"<option"+(s===o.st?" selected":"")+">"+s+"</option>"}).join("")+"</select></td><td>"+inv+"</td></tr>"});
+document.getElementById("rows").innerHTML=h||'<tr><td colspan="8" class="mut">لا توجد طلبات بعد.</td></tr>';
+document.getElementById("dc").textContent=d.length;document.getElementById("drows").innerHTML=d.map(function(x){return"<tr><td>"+esc(x.name)+"</td><td>"+esc(x.bt)+"</td><td>"+esc(x.area)+"</td><td>"+esc(x.last||"—")+"</td></tr>"}).join("");
+document.querySelectorAll("#rows select").forEach(function(s){s.onchange=function(){var a=L("rw_req");a.forEach(function(o){if(o.code===s.dataset.c)o.st=s.value});S("rw_req",a);drawAdm()}})}
+function addDemo(){var a=L("rw_req");a.push({code:"RW-FYM-"+(100+a.length+1),bt:prompt("الفصيلة (مثل B-)")||"B-",comp:"دم كامل",area:"الفيوم",hosp:"",phone:prompt("الهاتف")||"",t:Date.now(),st:"جديد"});S("rw_req",a);drawAdm()}
+function route(){var a=location.hash==="#admin";document.getElementById("adm").classList.toggle("hide",!a);document.getElementById("pub").classList.toggle("hide",a);if(a)drawAdm();window.scrollTo(0,0)}
+window.addEventListener("hashchange",route);drawMap();route();
+</script></body></html>
