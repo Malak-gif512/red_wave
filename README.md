@@ -57,3 +57,20 @@ Field interviews in Faiyum follow **The Mom Test** principles—focusing on past
 2. Confirm internal blood storage and `24/7` surgical/ER activity during initial hospital visits.
 3. Run a short, low-friction pilot using existing stock/sheet data while protecting hospital data privacy.
 4. Log real consumption rates, expiry pain points, and decision criteria in the field notes sheet.
+
+## Project Structure
+
+* `index.html` — Arabic RTL landing page presenting the problem, ICP, component rules, ROI estimator, and Pilot inquiry form.
+* `dashboard.html` — Interactive MVP dashboard with multi-facility switching, FEFO alerts, inter-hospital transfer requests, and SheetJS (`.xlsx`) import/export.
+
+---
+
+## Team & Contact
+
+* **Team Name:** Red Wave Team
+* **Team Members:**
+  * Malak Hussein Ahmed — Team Lead
+  * Nora Abdelazeem — Team Member
+  * Razan Ahmed — Team Member
+  * Saif Ahmed — Team Member
+* **Email:** `malakhussein635@gmail.com`
